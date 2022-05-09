@@ -1,7 +1,12 @@
+import { Render } from "./bratik-types"
+
 let width: number,
     height: number,
     canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D
+    ctx: CanvasRenderingContext2D,
+
+    frame = 0,
+    looping = true
 
 
 
@@ -64,6 +69,27 @@ const fill = (color = "white") => {
 const stroke = (color = "black") => {
   ctx.strokeStyle = color
 }
+const clear = (
+  x = 0,
+  y = 0,
+  w = width,
+  h = height,
+) => {
+  ctx.clearRect(x, y, w, h)
+}
+
+
+
+const loop: Render = (draw) => {
+  const render = () => {
+    if (looping) {
+      frame++
+      draw()
+    }
+    requestAnimationFrame(render)
+  }
+  render()
+}
 
 
 
@@ -74,6 +100,10 @@ export {
 
   fill,
   stroke,
+  clear,
+  
+  frame,
+  loop,
 
   CLOSE,
 }
