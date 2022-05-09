@@ -9,7 +9,7 @@ let width: number,
     ctx: CanvasRenderingContext2D,
 
     frame = 0,
-    looping = true
+    looping = false
 
 
 
@@ -122,16 +122,22 @@ const clear = (
 }
 
 
+let play: () => void,
+    stop: typeof play
 
-const loop: Render = (draw) => {
-  const render = () => {
-    if (looping) {
-      frame++
-      draw()
-    }
-    requestAnimationFrame(render)
+const loop: Render = (drawingCallBack) => {
+  looping = true
+  let rAFid: number
+  play = () => {
+    frame++
+    drawingCallBack()
+    rAFid = requestAnimationFrame(play)
   }
-  render()
+  stop = () => {
+    looping = false
+    cancelAnimationFrame(rAFid)
+  }
+  play()
 }
 
 
@@ -151,6 +157,8 @@ export {
 
   frame,
   loop,
+  stop,
+  looping,
 
   CLOSE,
   PI,
