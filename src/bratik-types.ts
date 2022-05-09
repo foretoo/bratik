@@ -1,0 +1,1 @@
+export type Render = (fn: () => void) => void
