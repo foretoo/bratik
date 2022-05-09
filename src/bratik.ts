@@ -32,6 +32,28 @@ const getcanvas = (w?: number, h?: number, id?: string) => {
 
 
 
+const CLOSE = "CLOSE"
+let shaping = false
+
+const shape = (arg?: string) => {
+  if (arg === "CLOSE") ctx.closePath()
+  if (shaping) {
+    shaping = false
+    draw()
+  }
+  else ctx.beginPath()
+}
+
+const vertex = (x: number, y: number) => {
+  if (shaping) ctx.lineTo(x, y)
+  else {
+    shaping = true
+    ctx.moveTo(x, y)
+  }
+}
+
+
+
 const draw = () => {
   ctx.fill()
   ctx.stroke()
@@ -47,6 +69,11 @@ const stroke = (color = "black") => {
 
 export {
   getcanvas,
+  shape,
+  vertex,
+
   fill,
   stroke,
+
+  CLOSE,
 }
