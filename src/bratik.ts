@@ -25,10 +25,28 @@ const getcanvas = (w?: number, h?: number, id?: string) => {
     canvas.setAttribute("width", width.toString())
     canvas.setAttribute("height", height.toString())
   }
-  
+  ctx.fillStyle = "white"
+  ctx.strokeStyle = "black"
   return { width, height, ctx, canvas }
 }
 
+
+
+const draw = () => {
+  ctx.fill()
+  ctx.stroke()
+}
+const fill = (color = "white") => {
+  ctx.fillStyle = color
+}
+const stroke = (color = "black") => {
+  ctx.strokeStyle = color
+}
+
+
+
 export {
   getcanvas,
+  fill,
+  stroke,
 }
