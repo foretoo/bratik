@@ -1,5 +1,8 @@
 import { Render } from "./bratik-types"
 
+const PI = Math.PI,
+      TAU = PI * 2
+
 let width: number,
     height: number,
     canvas: HTMLCanvasElement,
@@ -56,6 +59,46 @@ const vertex = (x: number, y: number) => {
     ctx.moveTo(x, y)
   }
 }
+const arc = (
+  x1 =  0, y1 =  0,
+  x2 = 20, y2 = 20,
+  r =  20 
+) => {
+  ctx.arcTo(x1, y1, x2, y2, r)
+}
+
+const circle = (
+  x = 0,
+  y = 0,
+  r = 10
+) => {
+  shape()
+  shaping = true
+  ctx.arc(x, y, r, 0, TAU)
+  shape()
+}
+
+const rect = (
+  x = 0,
+  y = 0,
+  w = 20,
+  h = 20,
+  r = 5,
+) => {
+  shape()
+  if (r) {
+    vertex(x + r, y)
+    arc(x + w, y, x + w, y + h, r)
+    arc(x + w, y + h, x, y + h, r)
+    arc(x, y + h, x, y, r)
+    arc(x, y, x + w, y, r)
+  }
+  else {
+    shaping = true
+    ctx.rect(x, y, w, h)
+  }
+  shape()
+}
 
 
 
@@ -97,13 +140,19 @@ export {
   getcanvas,
   shape,
   vertex,
+  arc,
+
+  circle,
+  rect,
 
   fill,
   stroke,
   clear,
-  
+
   frame,
   loop,
 
   CLOSE,
+  PI,
+  TAU,
 }
