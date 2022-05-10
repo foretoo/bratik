@@ -1,4 +1,5 @@
-import { Render } from "./bratik-types"
+import { Render, Point, RoundedPoint } from "./bratik-types"
+import { find_angle } from "./utils"
 
 const PI = Math.PI,
       TAU = PI * 2
@@ -72,6 +73,48 @@ const arc = (
   ctx.arcTo(x1, y1, x2, y2, r)
 }
 
+const round_shape = (
+  points: Point[], radius: number
+) => {
+  ctx.beginPath()
+  
+  const rounded: RoundedPoint[] = points.map((curr, i) => {
+    const
+      prev = points[(i - 1 + points.length) % points.length],
+      next = points[(i + 1) % points.length],
+      angle_main = find_angle(prev, curr, next),
+      angle_next = find_angle(curr, next),
+      angle_prev = find_angle(prev, curr),
+      length = radius / Math.tan(angle_main / 2)
+
+    return {
+      ...curr,
+      in: {
+        x: curr.x - Math.cos(angle_prev) * length,
+        y: curr.y - Math.sin(angle_prev) * length
+      },
+      out: {
+        x: curr.x + Math.cos(angle_next) * length,
+        y: curr.y + Math.sin(angle_next) * length,
+      },
+      get prev() {
+        return rounded[(i - 1 + points.length) % points.length]
+      },
+      get next() {
+        return rounded[(i + 1) % points.length]
+      }
+    }
+  })
+
+  rounded.forEach((p, i) => {
+    if (!i) ctx.moveTo(p.in.x, p.in.y)
+    ctx.arcTo(p.x, p.y, p.next.x, p.next.y, radius)
+    ctx.lineTo(p.next.in.x, p.next.in.y)
+  })
+
+  draw()
+}
+
 const line = (
   x1: number, y1: number,
   x2: number, y2: number,
@@ -89,7 +132,6 @@ const circle = (
   ctx.arc(x, y, r, 0, TAU)
   draw()
 }
-
 const rect = (
   x: number, y: number,
   w = 20, h = 20,
@@ -155,6 +197,7 @@ export {
   shape,
   vertex,
   arc,
+  round_shape,
 
   line,
   circle,

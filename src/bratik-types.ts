@@ -2,6 +2,12 @@ export type Point = {
   x: number,
   y: number
 }
+export type RoundedPoint = Point & {
+  in: Point,
+  out: Point,
+  next: RoundedPoint,
+  prev: RoundedPoint
+}
 export type FindLength = (
   A: Point, B: Point
 ) => number
