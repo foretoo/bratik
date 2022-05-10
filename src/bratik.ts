@@ -77,7 +77,7 @@ const round_shape = (
   points: Point[], radius: number
 ) => {
   ctx.beginPath()
-  
+
   const rounded: RoundedPoint[] = points.map((curr, i) => {
     const
       prev = points[(i - 1 + points.length) % points.length],
@@ -155,11 +155,15 @@ const draw = () => {
   ctx.fill()
   ctx.stroke()
 }
-const fill = (color = "white") => {
-  ctx.fillStyle = color
+const fill = (color: string | null) => {
+  if (color === null)
+    ctx.fillStyle = "transparent"
+  else ctx.fillStyle = color
 }
-const stroke = (color = "black") => {
-  ctx.strokeStyle = color
+const stroke = (color: string | null) => {
+  if (color === null)
+    ctx.strokeStyle = "transparent"
+  else ctx.strokeStyle = color
 }
 const clear = (
   x = 0,
