@@ -9,9 +9,9 @@ export const find_angle: FindAngle = (A, B, C) => {
   else {
     const AB = find_length(A, B),
           BC = find_length(B, C),
-          AC = find_length(C, A)
+          CA = find_length(C, A)
 
-    return Math.acos((BC*BC + AB*AB - AC*AC) / (2*BC*AB))
+    return Math.acos((AB*AB + BC*BC - CA*CA) / (2*AB*BC))
   }
 }
 
