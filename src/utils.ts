@@ -1,13 +1,4 @@
-export type Point = {
-  x: number,
-  y: number
-}
-type FindLength = (
-  A: Point, B: Point
-) => number
-type FindAngle = (
-  A: Point, B: Point, C?: Point
-) => number
+import { FindAngle, FindLength } from "./bratik-types"
 
 export const find_length: FindLength = (A, B) =>
   Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2))
