@@ -40,11 +40,12 @@ const getcanvas = (w?: number, h?: number, id?: string) => {
 
 
 
-const CLOSE = "CLOSE"
+const CLOSE = "close"
 let shaping = false
 
 const shape = (arg?: string) => {
-  if (arg === "CLOSE") ctx.closePath()
+  if (arg === "close") ctx.closePath()
+
   if (shaping) {
     shaping = false
     draw()
@@ -144,6 +145,7 @@ const loop: Render = (drawingCallBack) => {
 
 export {
   getcanvas,
+
   shape,
   vertex,
   arc,
