@@ -38,6 +38,7 @@ const getcanvas = (
   }
   ctx.fillStyle = "white"
   ctx.strokeStyle = "black"
+  ctx.imageSmoothingEnabled = true
   return { width, height, ctx, canvas }
 }
 
@@ -156,14 +157,16 @@ const draw = () => {
   ctx.stroke()
 }
 const fill = (color: string | null) => {
-  if (color === null)
-    ctx.fillStyle = "transparent"
+  if (color === null) ctx.fillStyle = "transparent"
   else ctx.fillStyle = color
 }
-const stroke = (color: string | null) => {
-  if (color === null)
-    ctx.strokeStyle = "transparent"
+const stroke = (
+  color: string | null,
+  width?: number
+) => {
+  if (color === null) ctx.strokeStyle = "transparent"
   else ctx.strokeStyle = color
+  if (width !== undefined) ctx.lineWidth = width
 }
 const clear = (
   x = 0,
