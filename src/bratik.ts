@@ -1,5 +1,5 @@
 import { Render, Point, RoundedPoint } from "./bratik-types"
-import { find_angle } from "./utils"
+import { find_angle, find_length } from "./utils"
 
 const PI = Math.PI,
       TAU = PI * 2
@@ -86,18 +86,18 @@ const round_shape = (
       angle_main = find_angle(prev, curr, next),
       angle_next = find_angle(curr, next),
       angle_prev = find_angle(prev, curr),
-      length = radius / Math.tan(angle_main / 2)
+      offset = radius / Math.tan(angle_main / 2)
 
     return {
       ...curr,
-      length,
+      offset,
       in: {
-        x: curr.x - Math.cos(angle_prev) * length,
-        y: curr.y - Math.sin(angle_prev) * length
+        x: curr.x - Math.cos(angle_prev) * offset,
+        y: curr.y - Math.sin(angle_prev) * offset
       },
       out: {
-        x: curr.x + Math.cos(angle_next) * length,
-        y: curr.y + Math.sin(angle_next) * length,
+        x: curr.x + Math.cos(angle_next) * offset,
+        y: curr.y + Math.sin(angle_next) * offset,
       },
       get prev() {
         return rounded[(i - 1 + points.length) % points.length]
