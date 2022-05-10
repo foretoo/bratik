@@ -13,7 +13,9 @@ let width: number,
 
 
 
-const getcanvas = (w?: number, h?: number, id?: string) => {
+const getcanvas = (
+  w?: number, h?: number, id?: string
+) => {
 
   canvas = document.createElement("canvas")
   ctx = canvas.getContext("2d")!
@@ -53,7 +55,9 @@ const shape = (arg?: string) => {
   else ctx.beginPath()
 }
 
-const vertex = (x: number, y: number) => {
+const vertex = (
+  x: number, y: number
+) => {
   if (shaping) ctx.lineTo(x, y)
   else {
     shaping = true
@@ -61,44 +65,46 @@ const vertex = (x: number, y: number) => {
   }
 }
 const arc = (
-  x1 =  0, y1 =  0,
-  x2 = 20, y2 = 20,
-  r =  20 
+  x1: number, y1: number,
+  x2: number, y2: number,
+  r: number
 ) => {
   ctx.arcTo(x1, y1, x2, y2, r)
 }
 
+const line = (
+  x1: number, y1: number,
+  x2: number, y2: number,
+) => {
+  ctx.beginPath()
+  ctx.moveTo(x1, y1)
+  ctx.lineTo(x2, y2)
+  draw()
+}
 const circle = (
-  x = 0,
-  y = 0,
+  x: number, y: number,
   r = 10
 ) => {
-  shape()
-  shaping = true
+  ctx.beginPath()
   ctx.arc(x, y, r, 0, TAU)
-  shape()
+  draw()
 }
 
 const rect = (
-  x = 0,
-  y = 0,
-  w = 20,
-  h = 20,
-  r = 5,
+  x: number, y: number,
+  w = 20, h = 20,
+  r?: number,
 ) => {
-  shape()
+  ctx.beginPath()
   if (r) {
-    vertex(x + r, y)
-    arc(x + w, y, x + w, y + h, r)
-    arc(x + w, y + h, x, y + h, r)
-    arc(x, y + h, x, y, r)
-    arc(x, y, x + w, y, r)
+    ctx.moveTo(x + r, y)
+    ctx.arcTo(x + w, y, x + w, y + h, r)
+    ctx.arcTo(x + w, y + h, x, y + h, r)
+    ctx.arcTo(x, y + h, x, y, r)
+    ctx.arcTo(x, y, x + w, y, r)
   }
-  else {
-    shaping = true
-    ctx.rect(x, y, w, h)
-  }
-  shape()
+  else ctx.rect(x, y, w, h)
+  draw()
 }
 
 
@@ -150,6 +156,7 @@ export {
   vertex,
   arc,
 
+  line,
   circle,
   rect,
 
