@@ -90,6 +90,7 @@ const round_shape = (
 
     return {
       ...curr,
+      length,
       in: {
         x: curr.x - Math.cos(angle_prev) * length,
         y: curr.y - Math.sin(angle_prev) * length
