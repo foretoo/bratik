@@ -12,8 +12,9 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/lib/bratik.ts"),
       name: "bratik",
-      fileName: (format) => `bratik.${format}.js`,
+      formats: [ "es" ]
     },
+    emptyOutDir: false,
   },
-  plugins: [dts()],
+  // plugins: [dts()],
 })
