@@ -6,4 +6,11 @@ export default defineConfig({
     host: true,
     open: "/src/index.html",
   },
+  build: {
+    lib: {
+      entry: path.resolve(__dirname, "src/bratik.ts"),
+      name: "bratik",
+      fileName: (format) => `bratik.${format}.js`,
+    },
+  },
 })

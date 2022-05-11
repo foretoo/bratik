@@ -1,7 +1,15 @@
 {
   "name": "bratik",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.2.1",
+  "files": ["dist"],
+  "main": "./dist/bratik.umd.js",
+  "module": "./dist/bratik.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/bratik.es.js",
+      "require": "./dist/bratik.umd.js"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
