@@ -8,7 +8,7 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/bratik.ts"),
+      entry: path.resolve(__dirname, "src/lib/bratik.ts"),
       name: "bratik",
       fileName: (format) => `bratik.${format}.js`,
     },

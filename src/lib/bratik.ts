@@ -1,4 +1,5 @@
-import { Render } from "./bratik-types"
+import { Render, Point } from "./bratik-types"
+import { round_shape } from "./round-shape"
 
 const PI = Math.PI,
       TAU = PI * 2
@@ -160,6 +161,7 @@ export {
   ctx,
 
   shape,
+  round_shape,
   vertex,
   arc,
 
@@ -180,4 +182,6 @@ export {
   CLOSE,
   PI,
   TAU,
+
+  type Point
 }
