@@ -14,6 +14,7 @@ export default defineConfig({
       name: "bratik",
       formats: [ "es" ]
     },
+    target: "esnext",
     emptyOutDir: false,
   },
   // plugins: [dts()],
