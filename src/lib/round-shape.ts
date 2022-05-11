@@ -1,5 +1,5 @@
 import { ctx, draw } from "./bratik"
-import { LinkedRoundedPoint, Point } from "./bratik-types"
+import { LinkedRoundedPoint, Point } from "./types"
 import { find_angle } from "./utils"
 
 

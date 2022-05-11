@@ -1,4 +1,4 @@
-import { FindAngle, FindLength } from "./bratik-types"
+import { FindAngle, FindLength } from "./types"
 
 export const find_length: FindLength = (A, B) =>
   Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2))

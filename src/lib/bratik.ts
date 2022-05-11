@@ -1,4 +1,4 @@
-import { Render, Point } from "./bratik-types"
+import { Render, Point } from "./types"
 import { round_shape } from "./round-shape"
 
 const PI = Math.PI,
