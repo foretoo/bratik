@@ -1,5 +1,5 @@
 import { ctx, draw } from "./bratik"
-import { Point, RoundedPoint } from "./bratik-types"
+import { LinkedRoundedPoint, Point } from "./bratik-types"
 import { find_angle } from "./utils"
 
 
@@ -9,7 +9,7 @@ const round_shape = (
 ) => {
   ctx.beginPath()
 
-  const rounded: RoundedPoint[] = points.map((curr, i) => {
+  const rounded: LinkedRoundedPoint[] = points.map((curr, i) => {
     const
       prev = points[(i - 1 + points.length) % points.length],
       next = points[(i + 1) % points.length],
@@ -19,7 +19,9 @@ const round_shape = (
       offset = radius / Math.tan(angle_main / 2)
 
     return {
+      id: i,
       ...curr,
+      radius,
       offset,
       in: {
         x: curr.x - Math.cos(angle_prev) * offset,
@@ -38,10 +40,11 @@ const round_shape = (
     }
   })
 
+  // TODO: void exclamations
   rounded.forEach((p, i) => {
     if (!i) ctx.moveTo(p.in.x, p.in.y)
-    ctx.arcTo(p.x, p.y, p.next.x, p.next.y, radius)
-    ctx.lineTo(p.next.in.x, p.next.in.y)
+    ctx.arcTo(p.x, p.y, p.next!.x, p.next!.y, radius)
+    ctx.lineTo(p.next!.in.x, p.next!.in.y)
   })
 
   draw()
