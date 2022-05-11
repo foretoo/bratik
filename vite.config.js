@@ -7,6 +7,7 @@ export default defineConfig({
     host: true,
     open: "/src/index.html",
   },
+  publicDir: false,
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/lib/bratik.ts"),

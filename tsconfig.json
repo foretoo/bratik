@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
+    "target": "es6",
+    "module": "es6",
     "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
+    "types": ["vite/client"],
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
