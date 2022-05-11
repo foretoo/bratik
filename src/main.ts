@@ -1,9 +1,9 @@
 import "./style.sass"
 import { Point } from "./bratik-types"
+import { assign_value } from "./utils"
 import {
   getcanvas, circle, shape, vertex, CLOSE, clear, fill, stroke
 } from "./bratik"
-import { assign_value } from "./utils"
 import { round_shape } from "./round-shape"
 
 const { canvas } = getcanvas(),
