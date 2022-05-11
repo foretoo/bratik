@@ -1,5 +1,4 @@
 import "./style.sass"
-import { assign_value } from "./lib/utils"
 import {
   getcanvas, circle, round_shape, shape, vertex, CLOSE, clear, fill, stroke, Point
 } from "./lib/bratik"
@@ -37,4 +36,16 @@ const draw = () => {
 
   fill("blue")
   points.length > 2 && round_shape(points, radius)
+}
+
+const assign_value = <T>(
+  value: T, arr: T[], length: number
+) => {
+  if (arr.length < length) arr.push(value)
+  else {
+    for (let i = 0; i < arr.length - 1; i++) {
+      arr[i] = arr[i + 1]
+    }
+    arr[length - 1] = value
+  }
 }
