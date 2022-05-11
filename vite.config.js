@@ -1,5 +1,6 @@
 import { defineConfig } from "vite"
 import path from "path"
+import dts from "vite-plugin-dts"
 
 export default defineConfig({
   server: {
@@ -13,4 +14,5 @@ export default defineConfig({
       fileName: (format) => `bratik.${format}.js`,
     },
   },
+  plugins: [dts()],
 })

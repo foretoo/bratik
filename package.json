@@ -1,7 +1,9 @@
 {
   "name": "bratik",
   "version": "0.2.1",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/bratik.umd.js",
   "module": "./dist/bratik.es.js",
   "exports": {
@@ -23,6 +25,7 @@
     "jest": "^28.1.0",
     "sass": "^1.51.0",
     "typescript": "^4.5.4",
-    "vite": "^2.9.7"
+    "vite": "^2.9.7",
+    "vite-plugin-dts": "^1.1.1"
   }
 }
