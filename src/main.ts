@@ -12,7 +12,7 @@ const { canvas } = getcanvas(),
 
 let radius = 20
 
-canvas.onmousedown = (e: MouseEvent) => {
+canvas.onpointerdown = (e: PointerEvent) => {
   const point = { x: e.pageX, y: e.pageY }
   assign_value(point, points, 5)
   draw()
