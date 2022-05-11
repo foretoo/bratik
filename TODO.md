@@ -1,0 +1,3 @@
+- [] prepare example for first v0.2.1 release
+- [] add linked list
+- [] add flag to prevent round oversteping and implement its functionality
