@@ -1,8 +1,6 @@
 import { Render, Point, LinkedRoundedPoint } from "./types"
+import { PI, TAU, CLOSE } from "./const"
 import { round_shape } from "./round-shape"
-
-const PI = Math.PI,
-      TAU = PI * 2
 
 let width: number,
     height: number,
@@ -44,7 +42,6 @@ const getcanvas = (
 
 
 
-const CLOSE = "close"
 let shaping = false
 
 const shape = (arg?: string) => {

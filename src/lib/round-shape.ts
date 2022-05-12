@@ -1,5 +1,5 @@
-import { PI, TAU } from "./bratik"
 import { LinkedRoundedPoint, Point } from "./types"
+import { PI, TAU } from "./const"
 import { find_angle, get_clock_dir } from "./utils"
 
 

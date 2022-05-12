@@ -1,5 +1,5 @@
-import { PI, TAU } from "./bratik"
 import { FindAngle, FindLength } from "./types"
+import { PI, TAU } from "./const"
 
 export const find_length: FindLength = (A, B) =>
   Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2))
