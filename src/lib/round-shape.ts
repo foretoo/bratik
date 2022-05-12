@@ -1,4 +1,4 @@
-import { ctx, draw } from "./bratik"
+import { ctx, draw, PI, TAU } from "./bratik"
 import { LinkedRoundedPoint, Point } from "./types"
 import { find_angle } from "./utils"
 
@@ -14,18 +14,36 @@ const round_shape = (
       prev = points[(i - 1 + points.length) % points.length],
       next = points[(i + 1) % points.length],
       angle_main = find_angle(prev, curr, next),
-      angle_next = find_angle(curr, next),
-      angle_prev = find_angle(prev, curr),
-      offset = radius / Math.tan(angle_main / 2)
+      angle_next = (find_angle(next, curr) + PI) % TAU,
+      angle_prev = (find_angle(prev, curr) + PI) % TAU,
+      offset = radius / Math.tan(angle_main / 2),
+      bis_length = radius / Math.sin(angle_main / 2),
+      angle_diff = angle_next - angle_prev,
+      clock_dir =
+        (angle_diff > PI && angle_diff < TAU) ||
+        (angle_diff < 0  && angle_diff > -PI)
+        ? -1 : 1,
+      angle_bis = angle_prev + clock_dir * angle_main / 2
+
+      points.length === 5 && console.log(
+        "prev: ", angle_prev, "\n", "next: ", angle_next
+        );
+      
 
     return {
       id: i,
       ...curr,
-      radius,
       offset,
+      radius: {
+        length: radius,
+        point: {
+          x: curr.x + Math.cos(angle_bis) * bis_length,
+          y: curr.y + Math.sin(angle_bis) * bis_length
+        }
+      },
       in: {
-        x: curr.x - Math.cos(angle_prev) * offset,
-        y: curr.y - Math.sin(angle_prev) * offset
+        x: curr.x + Math.cos(angle_prev) * offset,
+        y: curr.y + Math.sin(angle_prev) * offset
       },
       out: {
         x: curr.x + Math.cos(angle_next) * offset,
