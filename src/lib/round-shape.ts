@@ -1,6 +1,6 @@
 import { PI, TAU } from "./bratik"
 import { LinkedRoundedPoint, Point } from "./types"
-import { find_angle } from "./utils"
+import { find_angle, get_clock_dir } from "./utils"
 
 
 
@@ -17,11 +17,7 @@ const round_shape = (
       angle_prev = (find_angle(prev, curr) + PI) % TAU,
       offset = radius / Math.tan(angle_main / 2),
       bis_length = radius / Math.sin(angle_main / 2),
-      angle_diff = angle_next - angle_prev,
-      clock_dir =
-        (angle_diff > PI && angle_diff < TAU) ||
-        (angle_diff < 0  && angle_diff > -PI)
-        ? -1 : 1,
+      clock_dir = get_clock_dir(angle_prev, angle_next),
       angle_bis = angle_prev + clock_dir * angle_main / 2
 
     return {

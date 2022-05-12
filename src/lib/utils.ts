@@ -1,3 +1,4 @@
+import { PI, TAU } from "./bratik"
 import { FindAngle, FindLength } from "./types"
 
 export const find_length: FindLength = (A, B) =>
@@ -13,4 +14,15 @@ export const find_angle: FindAngle = (A, B, C) => {
 
     return Math.acos((AB*AB + BC*BC - CA*CA) / (2*AB*BC))
   }
+}
+
+export const get_clock_dir = (
+  angle1: number, angle2: number
+) => {
+  const angle_diff = angle2 - angle1
+  return (
+    (angle_diff > PI && angle_diff < TAU) ||
+    (angle_diff < 0  && angle_diff > -PI)
+    ? -1 : 1
+  )
 }
