@@ -1,15 +1,17 @@
-import { getcanvas, circle, round_shape, shape, vertex, CLOSE, clear, fill, stroke } from "../dist/bratik.js";
-const { canvas } = getcanvas(), points = [], grey = "#ccc";
-let radius = 20;
+import { getcanvas, circle, round_shape, shape, vertex, CLOSE, clear, fill, stroke, arc } from "../dist/bratik.js";
+const { canvas } = getcanvas(), points = [], grey = "#bbb";
+let radius = 20, polygon;
 canvas.onpointerdown = (e) => {
     const point = { x: e.pageX, y: e.pageY };
     assign_value(point, points, 5);
+    polygon = round_shape(points, radius);
     draw();
 };
 const radiusrange = document.querySelector("input");
 radiusrange.oninput = (e) => {
     const target = e.target;
     radius = parseInt(target.value);
+    polygon = round_shape(points, radius);
     draw();
 };
 const draw = () => {
@@ -21,9 +23,30 @@ const draw = () => {
     shape(CLOSE);
     stroke(null);
     fill(grey);
-    points.forEach((p) => circle(p.x, p.y, 3));
-    fill("blue");
-    points.length > 2 && round_shape(points, radius);
+    points.forEach((p) => circle(p.x, p.y, 2));
+    if (points.length > 2) {
+        fill("#eef");
+        stroke("blue", 1);
+        shape();
+        polygon.forEach((p, i) => {
+            if (!i)
+                vertex(p.in.x, p.in.y);
+            arc(p.x, p.y, p.next.x, p.next.y, radius);
+            vertex(p.next.in.x, p.next.in.y);
+        });
+        shape(CLOSE);
+        polygon.forEach((p) => {
+            stroke(null);
+            fill("red");
+            circle(p.radius.x, p.radius.y, 3);
+            fill(null);
+            stroke("blue", 4);
+            shape();
+            vertex(p.in.x, p.in.y);
+            arc(p.x, p.y, p.out.x, p.out.y, radius);
+            shape();
+        });
+    }
 };
 const assign_value = (value, arr, length) => {
     if (arr.length < length)

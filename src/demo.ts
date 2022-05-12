@@ -1,11 +1,11 @@
 import "./style.sass"
 import {
-  getcanvas, circle, round_shape, shape, vertex, CLOSE, clear, fill, stroke, Point, LinkedRoundedPoint
+  getcanvas, circle, round_shape, shape, vertex, CLOSE, clear, fill, stroke, Point, LinkedRoundedPoint, arc
 } from "./lib/bratik"
 
 const { canvas } = getcanvas(),
       points: Point[] = [],
-      grey = "#ccc"
+      grey = "#bbb"
 
 let radius = 20,
     polygon: LinkedRoundedPoint[]
@@ -35,15 +35,29 @@ const draw = () => {
 
   stroke(null)
   fill(grey)
-  points.forEach((p) => circle(p.x, p.y, 3))
+  points.forEach((p) => circle(p.x, p.y, 2))
 
   if (points.length > 2) {
-    polygon.forEach((point) => {
-      fill("blue")
-      circle(point.in.x, point.in.y, 3)
-      circle(point.out.x, point.out.y, 3)
+    fill("#eef")
+    stroke("blue", 1)
+    shape()
+    polygon.forEach((p, i) => {
+      if (!i) vertex(p.in.x, p.in.y);
+      arc(p.x, p.y, p.next!.x, p.next!.y, radius);
+      vertex(p.next!.in.x, p.next!.in.y);
+    })
+    shape(CLOSE)
+
+    polygon.forEach((p) => {
+      stroke(null)
       fill("red")
-      circle(point.radius.x, point.radius.y, 3)
+      circle(p.radius.x, p.radius.y, 3)
+      fill(null)
+      stroke("blue", 4)
+      shape()
+      vertex(p.in.x, p.in.y)
+      arc(p.x, p.y, p.out.x, p.out.y, radius);
+      shape()
     });
   }
 }
