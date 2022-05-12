@@ -17,8 +17,11 @@ canvas.onpointerdown = (e: PointerEvent) => {
   draw()
 }
 const radiusrange = document.querySelector("input")!
+const radiusvalue = document.querySelector("#radiusvalue")!
+radiusvalue.textContent = radiusrange.value
 radiusrange.oninput = (e: Event) => {
   const target = e.target as HTMLInputElement
+  radiusvalue.textContent = target.value
   radius = parseInt(target.value)
   polygon = round_shape(points, radius)
   draw()

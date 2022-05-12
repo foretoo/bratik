@@ -23,18 +23,31 @@ canvas {
   display: block;
 }
 
-input[type=range], p {
+label, p {
   position: absolute;
-  width: clamp(5rem, 50%, 15rem);
+  font-size: 0.8rem;
+  line-height: 1em;
 }
 
-input[type=range] {
+label {
+  width: 100%;
   top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+label input {
+  width: 50%;
+}
+label span {
+  width: calc(25% - 1rem);
+  font-size: inherit;
+}
+label span:first-child {
+  text-align: right;
 }
 
 p {
   bottom: 2rem;
-  font-size: 0.8rem;
-  line-height: 1em;
   text-align: center;
 }

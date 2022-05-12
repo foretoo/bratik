@@ -8,8 +8,11 @@ canvas.onpointerdown = (e) => {
     draw();
 };
 const radiusrange = document.querySelector("input");
+const radiusvalue = document.querySelector("#radiusvalue");
+radiusvalue.textContent = radiusrange.value;
 radiusrange.oninput = (e) => {
     const target = e.target;
+    radiusvalue.textContent = target.value;
     radius = parseInt(target.value);
     polygon = round_shape(points, radius);
     draw();
