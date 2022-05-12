@@ -4,6 +4,11 @@ export type Point = {
 }
 export type RoundedPoint = Point & {
   length: number,
+  angle: {
+    main: number,
+    next: number,
+    prev: number
+  }
   radius: Point & {
     length: number,
   },
