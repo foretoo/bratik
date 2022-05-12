@@ -1,6 +1,6 @@
 import { LinkedRoundedPoint, Point } from "./types"
 import { PI, TAU } from "./const"
-import { find_angle, get_clock_dir } from "./utils"
+import { find_angle, find_length, get_clock_dir } from "./utils"
 
 
 
@@ -12,6 +12,7 @@ const round_shape = (
     const
       prev = points[(i - 1 + points.length) % points.length],
       next = points[(i + 1) % points.length],
+      length = find_length(curr, next),
       angle_main = find_angle(prev, curr, next),
       angle_next = (find_angle(next, curr) + PI) % TAU,
       angle_prev = (find_angle(prev, curr) + PI) % TAU,
@@ -23,6 +24,7 @@ const round_shape = (
     return {
       id: i,
       ...curr,
+      length,
       offset,
       radius: {
         length: radius,
