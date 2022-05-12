@@ -7,7 +7,8 @@ export type RoundedPoint = Point & {
   angle: {
     main: number,
     next: number,
-    prev: number
+    prev: number,
+    bis:  number,
   }
   radius: Point & {
     length: number,
