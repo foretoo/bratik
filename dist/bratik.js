@@ -1,3 +1,6 @@
+const PI = Math.PI, TAU = PI * 2;
+const CLOSE = "close";
+
 const find_length = (A, B) => Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2));
 const find_angle = (A, B, C) => {
   if (!C)
@@ -7,42 +10,48 @@ const find_angle = (A, B, C) => {
     return Math.acos((AB * AB + BC * BC - CA * CA) / (2 * AB * BC));
   }
 };
-
-const round_shape = (points, radius) => {
-  ctx.beginPath();
-  const rounded = points.map((curr, i) => {
-    const prev = points[(i - 1 + points.length) % points.length], next = points[(i + 1) % points.length], angle_main = find_angle(prev, curr, next), angle_next = find_angle(curr, next), angle_prev = find_angle(prev, curr), offset = radius / Math.tan(angle_main / 2);
-    return {
-      id: i,
-      ...curr,
-      radius,
-      offset,
-      in: {
-        x: curr.x - Math.cos(angle_prev) * offset,
-        y: curr.y - Math.sin(angle_prev) * offset
-      },
-      out: {
-        x: curr.x + Math.cos(angle_next) * offset,
-        y: curr.y + Math.sin(angle_next) * offset
-      },
-      get prev() {
-        return rounded[(i - 1 + points.length) % points.length];
-      },
-      get next() {
-        return rounded[(i + 1) % points.length];
-      }
-    };
-  });
-  rounded.forEach((p, i) => {
-    if (!i)
-      ctx.moveTo(p.in.x, p.in.y);
-    ctx.arcTo(p.x, p.y, p.next.x, p.next.y, radius);
-    ctx.lineTo(p.next.in.x, p.next.in.y);
-  });
-  draw();
+const get_clock_dir = (angle1, angle2) => {
+  const angle_diff = angle2 - angle1;
+  return angle_diff > PI && angle_diff < TAU || angle_diff < 0 && angle_diff > -PI ? -1 : 1;
 };
 
-const PI = Math.PI, TAU = PI * 2;
+const round_shape = (points, radius) => {
+  const rounded_points = points.reduce((shape, curr, i) => {
+    const prev = points[(i - 1 + points.length) % points.length], next = points[(i + 1) % points.length], length = find_length(curr, next), angle = {
+      main: find_angle(prev, curr, next),
+      next: (find_angle(next, curr) + PI) % TAU,
+      prev: (find_angle(prev, curr) + PI) % TAU
+    }, offset = radius / Math.tan(angle.main / 2), bis_length = radius / Math.sin(angle.main / 2), clock_dir = get_clock_dir(angle.prev, angle.next), angle_bis = angle.prev + clock_dir * angle.main / 2;
+    return shape.concat({
+      id: i,
+      ...curr,
+      length,
+      offset,
+      angle,
+      radius: {
+        length: radius,
+        x: curr.x + Math.cos(angle_bis) * bis_length,
+        y: curr.y + Math.sin(angle_bis) * bis_length
+      },
+      in: {
+        x: curr.x + Math.cos(angle.prev) * offset,
+        y: curr.y + Math.sin(angle.prev) * offset
+      },
+      out: {
+        x: curr.x + Math.cos(angle.next) * offset,
+        y: curr.y + Math.sin(angle.next) * offset
+      },
+      get prev() {
+        return rounded_points[(i - 1 + points.length) % points.length];
+      },
+      get next() {
+        return rounded_points[(i + 1) % points.length];
+      }
+    });
+  }, []);
+  return rounded_points;
+};
+
 let width, height, canvas, ctx, frame = 0, looping = false;
 const getcanvas = (w, h, id) => {
   canvas = document.createElement("canvas");
@@ -66,7 +75,6 @@ const getcanvas = (w, h, id) => {
   ctx.imageSmoothingEnabled = true;
   return { width, height, ctx, canvas };
 };
-const CLOSE = "close";
 let shaping = false;
 const shape = (arg) => {
   if (arg === "close")

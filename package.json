@@ -1,7 +1,7 @@
 {
   "name": "bratik",
   "author": "Sergey Borovikov",
-  "version": "0.2.1",
+  "version": "0.2.6",
   "main": "./dist/bratik.js",
   "types": "./dist/bratik.d.ts",
   "scripts": {

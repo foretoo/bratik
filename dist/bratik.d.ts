@@ -1,5 +1,5 @@
 declare type Point = { x: number; y: number };
-declare type RoundedPoint = Point & { radius: number; offset: number; in: Point; out: Point };
+declare type RoundedPoint = Point & { length: number, angle: { main: number, next: number, prev: number }, radius: Point & { length: number, }, offset: number, in: Point, out: Point }
 declare type Linked<T> = T & { id: number; next: Linked<T> | null; prev: Linked<T> | null };
 declare type LinkedRoundedPoint = Linked<RoundedPoint>;
 declare type FindLength = (A: Point, B: Point) => number;
