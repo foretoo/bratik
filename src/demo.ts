@@ -43,7 +43,7 @@ const draw = () => {
       circle(point.in.x, point.in.y, 3)
       circle(point.out.x, point.out.y, 3)
       fill("red")
-      circle(point.radius.point.x, point.radius.point.y, 3)
+      circle(point.radius.x, point.radius.y, 3)
     });
   }
 }

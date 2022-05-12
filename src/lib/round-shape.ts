@@ -26,14 +26,12 @@ const round_shape = (
       offset,
       radius: {
         length: radius,
-        point: {
-          x: curr.x + Math.cos(angle_bis) * bis_length,
-          y: curr.y + Math.sin(angle_bis) * bis_length
-        }
+        x: curr.x + Math.cos(angle_bis) * bis_length,
+        y: curr.y + Math.sin(angle_bis) * bis_length,
       },
       in: {
         x: curr.x + Math.cos(angle_prev) * offset,
-        y: curr.y + Math.sin(angle_prev) * offset
+        y: curr.y + Math.sin(angle_prev) * offset,
       },
       out: {
         x: curr.x + Math.cos(angle_next) * offset,

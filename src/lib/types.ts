@@ -3,9 +3,8 @@ export type Point = {
   y: number,
 }
 export type RoundedPoint = Point & {
-  radius: {
+  radius: Point & {
     length: number,
-    point: Point,
   },
   offset: number,
   in: Point,
