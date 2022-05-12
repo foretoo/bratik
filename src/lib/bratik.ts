@@ -1,4 +1,4 @@
-import { Render, Point } from "./types"
+import { Render, Point, LinkedRoundedPoint } from "./types"
 import { round_shape } from "./round-shape"
 
 const PI = Math.PI,
@@ -183,5 +183,6 @@ export {
   PI,
   TAU,
 
-  type Point
+  type Point,
+  type LinkedRoundedPoint,
 }
