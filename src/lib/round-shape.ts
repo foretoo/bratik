@@ -24,11 +24,6 @@ const round_shape = (
         ? -1 : 1,
       angle_bis = angle_prev + clock_dir * angle_main / 2
 
-      points.length === 5 && console.log(
-        "prev: ", angle_prev, "\n", "next: ", angle_next
-        );
-      
-
     return {
       id: i,
       ...curr,
