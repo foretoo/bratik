@@ -1,59 +1,74 @@
 import { LinkedRoundedPoint, Point } from "./types"
-import { PI, TAU } from "./const"
 import { find_angle, find_length, get_clock_dir } from "./utils"
 
 
 
 const round_shape = (
   points: Point[], radius: number
-) => {
+): LinkedRoundedPoint[] => {
 
-  const rounded_points: LinkedRoundedPoint[] =
-  points.reduce((shape: LinkedRoundedPoint[], curr, i) => {
+  const rounded_points = points.reduce((
+    shape: LinkedRoundedPoint[], curr, id
+  ) => {
     const
-      prev = points[(i - 1 + points.length) % points.length],
-      next = points[(i + 1) % points.length],
+      prev = points[(id - 1 + points.length) % points.length],
+      next = points[(id + 1) % points.length],
       length = find_length(curr, next),
-      angle = {
-        main: find_angle(prev, curr, next),
-        next: (find_angle(next, curr) + PI) % TAU,
-        prev: (find_angle(prev, curr) + PI) % TAU,
-      },
-      offset = radius / Math.tan(angle.main / 2),
-      bis_length = radius / Math.sin(angle.main / 2),
-      clock_dir = get_clock_dir(angle.prev, angle.next),
-      angle_bis = angle.prev + clock_dir * angle.main / 2
+      angles = get_angles(prev, curr, next),
+      offset = radius / Math.tan(angles.main / 2),
+      bis_length = radius / Math.sin(angles.main / 2)
 
-    return shape.concat({
-      id: i,
+    const rounded_point: LinkedRoundedPoint = {
       ...curr,
+      id,
       length,
       offset,
-      angle,
+      angles,
       radius: {
         length: radius,
-        x: curr.x + Math.cos(angle_bis) * bis_length,
-        y: curr.y + Math.sin(angle_bis) * bis_length,
+        x: curr.x + Math.cos(angles.bis) * bis_length,
+        y: curr.y + Math.sin(angles.bis) * bis_length,
       },
       in: {
-        x: curr.x + Math.cos(angle.prev) * offset,
-        y: curr.y + Math.sin(angle.prev) * offset,
+        x: curr.x + Math.cos(angles.prev) * offset,
+        y: curr.y + Math.sin(angles.prev) * offset,
       },
       out: {
-        x: curr.x + Math.cos(angle.next) * offset,
-        y: curr.y + Math.sin(angle.next) * offset,
+        x: curr.x + Math.cos(angles.next) * offset,
+        y: curr.y + Math.sin(angles.next) * offset,
       },
       get prev() {
-        return rounded_points[(i - 1 + points.length) % points.length]
+        return rounded_points[(id - 1 + points.length) % points.length]
       },
       get next() {
-        return rounded_points[(i + 1) % points.length]
+        return rounded_points[(id + 1) % points.length]
       }
-    })
+    }
+
+    return shape.concat(rounded_point)
   }, [])
 
   return rounded_points
 }
+
+
+
+const get_angles = (
+  prev_point: Point,
+  curr_point: Point,
+  next_point: Point,
+) => {
+  const
+    main = find_angle(prev_point, curr_point, next_point),
+    prev = find_angle(curr_point, prev_point),
+    next = find_angle(curr_point, next_point),
+    dir  = get_clock_dir(prev, next),
+    bis  = prev + dir * main / 2
+  
+  return { main, next, prev, bis }
+}
+
+
 
 export {
   round_shape
