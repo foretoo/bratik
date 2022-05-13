@@ -46,7 +46,7 @@ const draw = () => {
     shape()
     polygon.forEach((p, i) => {
       if (!i) vertex(p.in.x, p.in.y);
-      arc(p.x, p.y, p.next!.x, p.next!.y, radius);
+      arc(p.x, p.y, p.next!.x, p.next!.y, p.radius.length);
       vertex(p.next!.in.x, p.next!.in.y);
     })
     shape(CLOSE)
@@ -59,7 +59,7 @@ const draw = () => {
       stroke("blue", 4)
       shape()
       vertex(p.in.x, p.in.y)
-      arc(p.x, p.y, p.out.x, p.out.y, radius);
+      arc(p.x, p.y, p.out.x, p.out.y, p.radius.length);
       shape()
     });
   }
