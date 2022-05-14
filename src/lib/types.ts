@@ -11,11 +11,13 @@ export type RoundedPoint = Point & {
     bis:  number,
   }
   radius: Point & {
-    length: number,
+    act: number,
+    max?: number,
   },
+  vel: number,
   offset: number,
-  in: Point,
-  out: Point,
+  in: Point & { lock?: Point },
+  out: Point & { lock?: Point },
 }
 export type Linked<T> = T & {
   id: number,
