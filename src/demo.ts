@@ -41,25 +41,25 @@ const draw = () => {
   points.forEach((p) => circle(p.x, p.y, 2))
 
   if (points.length > 2) {
-    fill("#eef")
+    fill("#7af")
     stroke("blue", 1)
     shape()
     polygon.forEach((p, i) => {
       if (!i) vertex(p.in.x, p.in.y);
-      arc(p.x, p.y, p.next!.x, p.next!.y, p.radius.length);
+      arc(p.x, p.y, p.next!.x, p.next!.y, Math.min(p.radius.act, p.radius.max!));
       vertex(p.next!.in.x, p.next!.in.y);
     })
     shape(CLOSE)
 
     polygon.forEach((p) => {
       stroke(null)
-      fill("red")
+      fill("blue")
       circle(p.radius.x, p.radius.y, 3)
       fill(null)
       stroke("blue", 4)
       shape()
       vertex(p.in.x, p.in.y)
-      arc(p.x, p.y, p.out.x, p.out.y, p.radius.length);
+      arc(p.x, p.y, p.out.x, p.out.y, Math.min(p.radius.act, p.radius.max!));
       shape()
     });
   }
