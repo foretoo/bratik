@@ -107,6 +107,48 @@ const rect = (
 
 
 
+const font = (
+ size: number | string, family?: string, options?: string
+) => {
+  let fontsize = "",
+      fontoptions = options ? options : "",
+      fontfamily = family ? family : "sans-serif"
+  
+  if (typeof size === "number") fontsize = size.toString() + "px"
+  if (typeof size === "string") {
+    const temp = size.match(/^(\d+)([a-z%]*)\/?(\d*)([a-z%]*)$/)
+    if (temp) {
+      fontsize = temp[1]
+      fontsize += temp[2] ? temp[2] : "px"
+      if (temp[3]) {
+        fontsize += `/${temp[3]}`
+        fontsize += temp[4] ? temp[4] : "px"
+      }
+    }
+  }
+  
+  ctx.font = `${fontoptions} ${fontsize} ${fontfamily}`.trim()
+}
+
+let text_width: number | undefined
+const settext = (
+  align: CanvasTextAlign,
+  base?: CanvasTextBaseline,
+  width?: number
+) => {
+  ctx.textAlign = align || "start"
+  ctx.textBaseline = base || "alphabetic"
+  text_width = width
+}
+const text = (
+  content: string, x: number, y: number, width?: number
+) => {
+  ctx.fillText(content, x, y, width || text_width)
+  ctx.strokeText(content, x, y, width || text_width)
+}
+
+
+
 const draw = () => {
   ctx.fill()
   ctx.stroke()
@@ -165,6 +207,10 @@ export {
   line,
   circle,
   rect,
+
+  font,
+  settext,
+  text,
 
   fill,
   stroke,
