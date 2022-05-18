@@ -1,102 +1,184 @@
-import { LinkedRoundedPoint, Point } from "./types"
+import { Linked, Point, RoundedPoint } from "./types"
 import { find_angle, find_length, get_clock_dir } from "./utils"
 
 
 
 const round_shape = (
   points: Point[], radius: number
-): LinkedRoundedPoint[] => {
+) => {
 
-  const rounded_points = points.reduce((
-    shape: LinkedRoundedPoint[], curr, id
-  ) => {
+  const rounded_points: Linked<RoundedPoint>[] =
+  points.map((curr, id) => {
+
     const
       prev = points[(id - 1 + points.length) % points.length],
       next = points[(id + 1) % points.length],
-      length = find_length(curr, next),
+      next_length = find_length(curr, next),
+      prev_length = find_length(prev, curr),
       angles = get_angles(prev, curr, next),
       vel = 1 / Math.tan(angles.main / 2),
-      offset = radius * vel,
-      bis_length = radius / Math.sin(angles.main / 2)
+      offset = radius * vel
       
-
-    const rounded_point: LinkedRoundedPoint = {
+    const result = {
       ...curr,
       id,
-      length,
-      offset,
       angles,
       vel,
-      radius: {
-        act: radius,
-        x: curr.x + Math.cos(angles.bis) * bis_length,
-        y: curr.y + Math.sin(angles.bis) * bis_length,
-      },
-      in: {
-        x: curr.x + Math.cos(angles.prev) * offset,
-        y: curr.y + Math.sin(angles.prev) * offset,
-      },
-      out: {
-        x: curr.x + Math.cos(angles.next) * offset,
-        y: curr.y + Math.sin(angles.next) * offset,
-      },
+      offset,
+      radius: { size: radius, x: curr.x, y: curr.y, hit: 0 },
+      in: { x: curr.x, y: curr.y, length: prev_length, rest: prev_length },
+      out: { x: curr.x, y: curr.y, length: next_length, rest: next_length },
+      locked: false,
       get prev() {
-        return rounded_points[(id - 1 + points.length) % points.length]
+        return getprev(id, rounded_points)
       },
       get next() {
-        return rounded_points[(id + 1) % points.length]
-      }
+        return getnext(id, rounded_points)
+      },
     }
 
-    if (id && points.length > 2) {
-      const prev = shape[id - 1], curr = rounded_point
-      set_locks(prev, curr)
-      
-      if (id === points.length - 1) {
-        const prev = rounded_point, curr = shape[0]
-        set_locks(prev, curr)
-      }
-    }
-
-    return shape.concat(rounded_point)
+    return result
   }, [])
+
+  rounded_points.forEach((p) => {
+    p.radius.hit = Math.min(
+      p.out.length / (p.vel + p.next.vel),
+      p.in.length  / (p.vel + p.prev.vel)
+    )
+  })
+
+  rounded_points
+    .sort((a, b) => a.radius.hit - b.radius.hit)
+    .forEach((curr) => {
+      clac(curr, rounded_points, radius)
+    })
+    console.log("################")
+
+  rounded_points
+    .sort((a, b) => a.id - b.id)
+    .forEach(fin_set)
 
   return rounded_points
 }
 
 
-
-const set_locks = (
-  prev: LinkedRoundedPoint, curr: LinkedRoundedPoint
+const clac = (
+  curr:   Linked<RoundedPoint>,
+  points: Linked<RoundedPoint>[],
+  radius: number
 ) => {
-  const
-    ratio = prev.length / (prev.vel + curr.vel),
-    prev_offset_lock = prev.vel * ratio,
-    curr_offset_lock = curr.vel * ratio
+  const prev = points.find((p) => p.id === (curr.id - 1 + points.length) % points.length)!
+  const next = points.find((p) => p.id === (curr.id + 1) % points.length)!
+  
+  console.log(curr.id)
+  
+  if (!curr.locked) {
 
-    prev.radius.max = prev.radius.max
-      ? Math.min(prev_offset_lock / prev.vel, prev.radius.max)
-      : prev_offset_lock / prev.vel
-    curr.radius.max = curr.radius.max
-      ? Math.min(curr_offset_lock / curr.vel, curr.radius.max)
-      : curr_offset_lock / curr.vel
+    //// PROBLEM
+    // if (prev.locked && !next.locked) {
+    //   curr.radius.hit = Math.min(
+    //     curr.out.length / (curr.vel + next.vel),
+    //     curr.in.rest / curr.vel
+    //   )
+    //   // curr.radius.hit = Math.min(
+    //   //   curr.radius.hit,
+    //   //   curr.in.rest / curr.vel
+    //   // )
+    // }
+      
+    // if (next.locked && !prev.locked) {
+    //   console.log("next_locked", curr.id, curr.radius.hit)
+    //   curr.radius.hit = Math.min(
+    //     curr.in.length / (curr.vel + prev.vel),
+    //     curr.out.rest / curr.vel
+    //   )
+    //   console.log(curr.radius.hit)
+    //   // console.log(curr.radius.hit);
+    //   // curr.radius.hit = Math.min(
+    //   //   curr.radius.hit,
+    //   //   curr.out.rest / curr.vel
+    //   // )
+    // }
+    
+    // if (prev.locked && next.locked) {
+    //   console.log("both_locked", curr.id, curr.radius.hit)
+    //   curr.radius.hit = Math.min(
+    //     curr.out.rest / curr.vel,
+    //     curr.in.rest / curr.vel,
+    //     radius
+    //   )
+    // }
 
-  prev.out = {
-    lock: {
-      x: prev.x + Math.cos(prev.angles.next) * prev_offset_lock,
-      y: prev.y + Math.sin(prev.angles.next) * prev_offset_lock,
-    },
-    x: prev.x + Math.cos(prev.angles.next) * Math.min(prev.offset, prev_offset_lock),
-    y: prev.y + Math.sin(prev.angles.next) * Math.min(prev.offset, prev_offset_lock),
+    if (radius >= curr.radius.hit) {
+      if (curr.radius.hit === next.radius.hit) {
+        curr.radius.size = curr.radius.hit
+        next.radius.size = curr.radius.hit
+        next.locked = true
+
+        next.offset = next.radius.size * next.vel
+
+        next.in.rest -= next.offset
+        next.out.rest -= next.offset
+        const _next = points.find((p) => p.id === (next.id + 1) % points.length)!
+        _next.in.rest -= next.offset
+
+        const _nnext = points.find((p) => p.id === (_next.id + 1) % points.length)!
+        _next.radius.hit = Math.min(
+          _next.out.length / (_next.vel + _nnext.vel),
+          _next.in.rest / _next.vel
+        )
+      }
+      else if (curr.radius.hit === prev.radius.hit) {
+        curr.radius.size = curr.radius.hit
+        prev.radius.size = curr.radius.hit
+        prev.locked = true
+
+        prev.offset = prev.radius.size * prev.vel
+
+        const _prev = points.find((p) => p.id === (prev.id - 1 + points.length) % points.length)!
+        _prev.out.rest -= prev.offset
+        prev.in.rest -= prev.offset
+        prev.out.rest -= prev.offset
+
+        const _pprev = points.find((p) => p.id === (_prev.id - 1 + points.length) % points.length)!
+        _prev.radius.hit = Math.min(
+          _prev.in.length / (_prev.vel + _pprev.vel),
+          _prev.out.rest / _prev.vel
+        )
+      }
+      else {
+        curr.radius.size = Math.min(
+          curr.in.rest / curr.vel,
+          curr.out.rest / curr.vel,
+          curr.radius.size
+        )
+      }
+    }
+
+    curr.offset = curr.radius.size * curr.vel
+    curr.locked = true
+    prev.out.rest -= curr.offset
+    curr.in.rest -= curr.offset
+    curr.out.rest -= curr.offset
+    next.in.rest -= curr.offset
+    
   }
-  curr.in = {
-    lock: {
-      x: curr.x + Math.cos(curr.angles.prev) * curr_offset_lock,
-      y: curr.y + Math.sin(curr.angles.prev) * curr_offset_lock,
-    },
-    x: curr.x + Math.cos(curr.angles.prev) * Math.min(curr.offset, curr_offset_lock),
-    y: curr.y + Math.sin(curr.angles.prev) * Math.min(curr.offset, curr_offset_lock),
-  }
+
+  
+
+  // console.log("________")
+}
+
+
+
+const fin_set = (p: Linked<RoundedPoint>) => {
+  const curr_bis_size = p.radius.size / Math.sin(p.angles.main / 2)
+  p.radius.x = p.x + Math.cos(p.angles.bis) * curr_bis_size
+  p.radius.y = p.y + Math.sin(p.angles.bis) * curr_bis_size
+  p.in.x  = p.x + Math.cos(p.angles.prev) * p.offset
+  p.in.y  = p.y + Math.sin(p.angles.prev) * p.offset
+  p.out.x = p.x + Math.cos(p.angles.next) * p.offset
+  p.out.y = p.y + Math.sin(p.angles.next) * p.offset
 }
 
 
@@ -113,11 +195,18 @@ const get_angles = (
     dir  = get_clock_dir(prev, next),
     bis  = prev + dir * main / 2
   
-  return { main, next, prev, bis }
+  return { main, next, prev, bis, dir }
+}
+
+const getprev = <T>(i: number, arr: T[]): T => {
+  return arr[(i - 1 + arr.length) % arr.length]
+}
+const getnext = <T>(i: number, arr: T[]): T => {
+  return arr[(i + 1) % arr.length]
 }
 
 
 
 export {
-  round_shape
+  round_shape,
 }

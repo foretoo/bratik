@@ -1,4 +1,4 @@
-import { Render, Point, LinkedRoundedPoint } from "./types"
+import { Render, Point } from "./types"
 import { PI, TAU, CLOSE } from "./const"
 import { round_shape } from "./round-shape"
 
@@ -227,5 +227,4 @@ export {
   TAU,
 
   type Point,
-  type LinkedRoundedPoint,
 }

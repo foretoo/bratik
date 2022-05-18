@@ -3,28 +3,19 @@ export type Point = {
   y: number,
 }
 export type RoundedPoint = Point & {
-  length: number,
-  angles: {
-    main: number,
-    next: number,
-    prev: number,
-    bis:  number,
-  }
-  radius: Point & {
-    act: number,
-    max?: number,
-  },
+  angles: { main: number, next: number, prev: number, bis: number, dir: number },
+  radius: Point & { size: number, hit: number },
   vel: number,
   offset: number,
-  in: Point & { lock?: Point },
-  out: Point & { lock?: Point },
+  in: Point & { length: number, rest: number },
+  out: Point & { length: number, rest: number },
+  locked: boolean,
 }
 export type Linked<T> = T & {
   id: number,
-  next: Linked<T> | null,
-  prev: Linked<T> | null,
+  next: Linked<T>,
+  prev: Linked<T>,
 }
-export type LinkedRoundedPoint = Linked<RoundedPoint>
 
 
 
