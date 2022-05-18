@@ -3,10 +3,12 @@ import { find_angle, find_length, get_clock_dir } from "./utils"
 
 
 
+let i: number
 const round_shape = (
   points: Point[], radius: number
 ) => {
 
+  i = points.length
   const rounded_points: Linked<RoundedPoint>[] =
   points.map((curr, id) => {
 
@@ -49,10 +51,17 @@ const round_shape = (
 
   rounded_points
     .sort((a, b) => a.radius.hit - b.radius.hit)
-    .forEach((curr) => {
-      clac(curr, rounded_points, radius)
+
+  while (i) {
+    clac(rounded_points[0], rounded_points, radius)
+    rounded_points
+    .sort((a, b) => {
+      if (a.locked && !b.locked) return 1
+      else if (!a.locked && b.locked) return -1
+      else if (a.locked && b.locked) return 0
+      else return a.radius.hit - b.radius.hit
     })
-    console.log("################")
+  }
 
   rounded_points
     .sort((a, b) => a.id - b.id)
@@ -67,106 +76,122 @@ const clac = (
   points: Linked<RoundedPoint>[],
   radius: number
 ) => {
-  const prev = points.find((p) => p.id === (curr.id - 1 + points.length) % points.length)!
-  const next = points.find((p) => p.id === (curr.id + 1) % points.length)!
-  
-  console.log(curr.id)
-  
-  if (!curr.locked) {
 
-    //// PROBLEM
-    // if (prev.locked && !next.locked) {
-    //   curr.radius.hit = Math.min(
-    //     curr.out.length / (curr.vel + next.vel),
-    //     curr.in.rest / curr.vel
-    //   )
-    //   // curr.radius.hit = Math.min(
-    //   //   curr.radius.hit,
-    //   //   curr.in.rest / curr.vel
-    //   // )
-    // }
-      
-    // if (next.locked && !prev.locked) {
-    //   console.log("next_locked", curr.id, curr.radius.hit)
-    //   curr.radius.hit = Math.min(
-    //     curr.in.length / (curr.vel + prev.vel),
-    //     curr.out.rest / curr.vel
-    //   )
-    //   console.log(curr.radius.hit)
-    //   // console.log(curr.radius.hit);
-    //   // curr.radius.hit = Math.min(
-    //   //   curr.radius.hit,
-    //   //   curr.out.rest / curr.vel
-    //   // )
-    // }
-    
-    // if (prev.locked && next.locked) {
-    //   console.log("both_locked", curr.id, curr.radius.hit)
-    //   curr.radius.hit = Math.min(
-    //     curr.out.rest / curr.vel,
-    //     curr.in.rest / curr.vel,
-    //     radius
-    //   )
-    // }
+  if (!curr.locked) {
+    const prev = points.find((p) => p.id === (curr.id - 1 + points.length) % points.length)!
+    const next = points.find((p) => p.id === (curr.id + 1) % points.length)!
 
     if (radius >= curr.radius.hit) {
       if (curr.radius.hit === next.radius.hit) {
+        const _prev = points.find((p) => p.id === (prev.id - 1 + points.length) % points.length)!
+        const _next = points.find((p) => p.id === (next.id + 1) % points.length)!
+        const _nnext = points.find((p) => p.id === (_next.id + 1) % points.length)!
+
         curr.radius.size = curr.radius.hit
         next.radius.size = curr.radius.hit
         next.locked = true
+        curr.locked = true
+        i -= 2
 
+        curr.offset = curr.radius.size * curr.vel
         next.offset = next.radius.size * next.vel
 
-        next.in.rest -= next.offset
-        next.out.rest -= next.offset
-        const _next = points.find((p) => p.id === (next.id + 1) % points.length)!
         _next.in.rest -= next.offset
-
-        const _nnext = points.find((p) => p.id === (_next.id + 1) % points.length)!
+        next.out.rest -= next.offset
+        next.in.rest -= next.offset
+        next.in.rest -= curr.offset
+        curr.out.rest -= curr.offset
+        curr.in.rest -= curr.offset
+        prev.out.rest -= curr.offset
+        
         _next.radius.hit = Math.min(
           _next.out.length / (_next.vel + _nnext.vel),
           _next.in.rest / _next.vel
         )
+        prev.radius.hit = Math.min(
+          prev.in.length / (prev.vel + _prev.vel),
+          prev.out.rest / prev.vel
+        )
       }
       else if (curr.radius.hit === prev.radius.hit) {
+        const _next = points.find((p) => p.id === (next.id + 1) % points.length)!
+        const _prev = points.find((p) => p.id === (prev.id - 1 + points.length) % points.length)!
+        const _pprev = points.find((p) => p.id === (_prev.id - 1 + points.length) % points.length)!
+        
         curr.radius.size = curr.radius.hit
         prev.radius.size = curr.radius.hit
+        curr.locked = true
         prev.locked = true
+        i -= 2
 
+        curr.offset = curr.radius.size * curr.vel
         prev.offset = prev.radius.size * prev.vel
 
-        const _prev = points.find((p) => p.id === (prev.id - 1 + points.length) % points.length)!
         _prev.out.rest -= prev.offset
         prev.in.rest -= prev.offset
         prev.out.rest -= prev.offset
+        prev.out.rest -= curr.offset
+        curr.in.rest -= curr.offset
+        curr.out.rest -= curr.offset
+        next.in.rest -= curr.offset
 
-        const _pprev = points.find((p) => p.id === (_prev.id - 1 + points.length) % points.length)!
+
         _prev.radius.hit = Math.min(
           _prev.in.length / (_prev.vel + _pprev.vel),
           _prev.out.rest / _prev.vel
         )
-      }
-      else {
-        curr.radius.size = Math.min(
-          curr.in.rest / curr.vel,
-          curr.out.rest / curr.vel,
-          curr.radius.size
+        next.radius.hit = Math.min(
+          next.out.length / (next.vel + _next.vel),
+          next.in.rest / next.vel
         )
       }
+      else {
+
+        if (prev.locked && !next.locked) {
+          curr.radius.size = Math.min(
+            curr.in.rest / curr.vel,
+            curr.out.length / (curr.vel + next.vel),
+            curr.radius.size
+          )
+        }
+        if (next.locked && !prev.locked) {
+          curr.radius.size = Math.min(
+            curr.out.rest / curr.vel,
+            curr.in.length / (curr.vel + prev.vel),
+            curr.radius.size
+          )
+        }
+        if (next.locked && prev.locked) {          
+          curr.radius.size = Math.min(
+            curr.in.rest / curr.vel,
+            curr.out.rest / curr.vel,
+            curr.radius.size
+          )
+        }
+
+        curr.offset = curr.radius.size * curr.vel
+
+        prev.out.rest -= curr.offset
+        curr.in.rest -= curr.offset
+        curr.out.rest -= curr.offset
+        next.in.rest -= curr.offset
+
+        curr.locked = true
+        i--
+      }
     }
+    else {
+      curr.offset = curr.radius.size * curr.vel
+      
+      prev.out.rest -= curr.offset
+      curr.in.rest -= curr.offset
+      curr.out.rest -= curr.offset
+      next.in.rest -= curr.offset
 
-    curr.offset = curr.radius.size * curr.vel
-    curr.locked = true
-    prev.out.rest -= curr.offset
-    curr.in.rest -= curr.offset
-    curr.out.rest -= curr.offset
-    next.in.rest -= curr.offset
-    
+      curr.locked = true
+      i--
+    }
   }
-
-  
-
-  // console.log("________")
 }
 
 
