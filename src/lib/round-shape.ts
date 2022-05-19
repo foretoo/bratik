@@ -27,7 +27,7 @@ const round_shape = (
       angles,
       vel,
       offset,
-      radius: { size: radius, x: curr.x, y: curr.y, hit: 0 },
+      radius: { size: radius, x: curr.x, y: curr.y, hit: radius },
       in: { x: curr.x, y: curr.y, length: prev_length, rest: prev_length },
       out: { x: curr.x, y: curr.y, length: next_length, rest: next_length },
       locked: false,
