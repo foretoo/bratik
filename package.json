@@ -1,9 +1,20 @@
 {
   "name": "bratik",
+  "description": "Tiny (p5.js-like) toolkit to cakewalk through a 2D rendering context of Canvas API",
+  "keywords": [ "canvas", "2d", "toolkit", "draw", "geometry", "round", "polygon", "corner" ],
   "author": "Sergey Borovikov",
   "version": "0.2.6",
+  "module": "./dist/bratik.js",
   "main": "./dist/bratik.js",
   "types": "./dist/bratik.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foretoo/bratik.git"
+  },
+  "bugs": {
+    "url": "https://github.com/foretoo/bratik/issues"
+  },
+  "homepage": "https://github.com/foretoo/bratik#readme",
   "scripts": {
     "dev": "vite",
     "public": "sass src/style.sass public/style.css --no-source-map && tsc --project tsconfig.public.json",
