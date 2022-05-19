@@ -4,8 +4,8 @@
   "keywords": [ "canvas", "2d", "toolkit", "draw", "geometry", "round", "polygon", "corner" ],
   "author": "Sergey Borovikov",
   "version": "0.2.6",
-  "module": "./dist/bratik.js",
-  "main": "./dist/bratik.js",
+  "module": "./dist/bratik.es.js",
+  "main": "./dist/bratik.cjs.js",
   "types": "./dist/bratik.d.ts",
   "repository": {
     "type": "git",
