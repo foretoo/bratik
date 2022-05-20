@@ -20,7 +20,7 @@ const round_shape = (
       angles = get_angles(prev, curr, next),
       vel = 1 / Math.tan(angles.main / 2),
       offset = radius * vel
-      
+
     const result = {
       ...curr,
       id,
@@ -31,16 +31,12 @@ const round_shape = (
       in: { x: curr.x, y: curr.y, length: prev_length, rest: prev_length },
       out: { x: curr.x, y: curr.y, length: next_length, rest: next_length },
       locked: false,
-      get prev() {
-        return getprev(id, rounded_points)
-      },
-      get next() {
-        return getnext(id, rounded_points)
-      },
+      get prev() { return getprev(id, rounded_points) },
+      get next() { return getnext(id, rounded_points) },
     }
 
     return result
-  }, [])
+  })
 
   rounded_points.forEach((p) => {
     p.radius.hit = Math.min(
@@ -49,18 +45,17 @@ const round_shape = (
     )
   })
 
-  rounded_points
-    .sort((a, b) => a.radius.hit - b.radius.hit)
+  rounded_points.sort((a, b) => a.radius.hit - b.radius.hit)
 
   while (i) {
     clac(rounded_points[0], rounded_points, radius)
     rounded_points
-    .sort((a, b) => {
-      if (a.locked && !b.locked) return 1
-      else if (!a.locked && b.locked) return -1
-      else if (a.locked && b.locked) return 0
-      else return a.radius.hit - b.radius.hit
-    })
+      .sort((a, b) => {
+        if (a.locked && !b.locked) return 1
+        else if (!a.locked && b.locked) return -1
+        else if (a.locked && b.locked) return 0
+        else return a.radius.hit - b.radius.hit
+      })
   }
 
   rounded_points
@@ -83,8 +78,8 @@ const clac = (
 
     if (radius >= curr.radius.hit) {
       if (curr.radius.hit === next.radius.hit) {
-        const _prev = points.find((p) => p.id === (prev.id - 1 + points.length) % points.length)!
-        const _next = points.find((p) => p.id === (next.id + 1) % points.length)!
+        const _prev  = points.find((p) => p.id === (prev.id - 1 + points.length) % points.length)!
+        const _next  = points.find((p) => p.id === (next.id + 1) % points.length)!
         const _nnext = points.find((p) => p.id === (_next.id + 1) % points.length)!
 
         curr.radius.size = curr.radius.hit
@@ -96,15 +91,15 @@ const clac = (
         curr.offset = curr.radius.size * curr.vel
         next.offset = next.radius.size * next.vel
 
-        _next.in.rest -= next.offset
+       _next.in.rest  -= next.offset
         next.out.rest -= next.offset
-        next.in.rest -= next.offset
-        next.in.rest -= curr.offset
+        next.in.rest  -= next.offset
+        next.in.rest  -= curr.offset
         curr.out.rest -= curr.offset
-        curr.in.rest -= curr.offset
+        curr.in.rest  -= curr.offset
         prev.out.rest -= curr.offset
-        
-        _next.radius.hit = Math.min(
+
+       _next.radius.hit = Math.min(
           _next.out.length / (_next.vel + _nnext.vel),
           _next.in.rest / _next.vel
         )
@@ -114,10 +109,10 @@ const clac = (
         )
       }
       else if (curr.radius.hit === prev.radius.hit) {
-        const _next = points.find((p) => p.id === (next.id + 1) % points.length)!
-        const _prev = points.find((p) => p.id === (prev.id - 1 + points.length) % points.length)!
+        const _next  = points.find((p) => p.id === (next.id + 1) % points.length)!
+        const _prev  = points.find((p) => p.id === (prev.id - 1 + points.length) % points.length)!
         const _pprev = points.find((p) => p.id === (_prev.id - 1 + points.length) % points.length)!
-        
+
         curr.radius.size = curr.radius.hit
         prev.radius.size = curr.radius.hit
         curr.locked = true
@@ -127,16 +122,15 @@ const clac = (
         curr.offset = curr.radius.size * curr.vel
         prev.offset = prev.radius.size * prev.vel
 
-        _prev.out.rest -= prev.offset
-        prev.in.rest -= prev.offset
+       _prev.out.rest -= prev.offset
+        prev.in.rest  -= prev.offset
         prev.out.rest -= prev.offset
         prev.out.rest -= curr.offset
-        curr.in.rest -= curr.offset
+        curr.in.rest  -= curr.offset
         curr.out.rest -= curr.offset
-        next.in.rest -= curr.offset
+        next.in.rest  -= curr.offset
 
-
-        _prev.radius.hit = Math.min(
+       _prev.radius.hit = Math.min(
           _prev.in.length / (_prev.vel + _pprev.vel),
           _prev.out.rest / _prev.vel
         )
@@ -182,7 +176,7 @@ const clac = (
     }
     else {
       curr.offset = curr.radius.size * curr.vel
-      
+
       prev.out.rest -= curr.offset
       curr.in.rest -= curr.offset
       curr.out.rest -= curr.offset
@@ -198,12 +192,12 @@ const clac = (
 
 const fin_set = (p: Linked<RoundedPoint>) => {
   const curr_bis_size = p.radius.size / Math.sin(p.angles.main / 2)
-  p.radius.x = p.x + Math.cos(p.angles.bis) * curr_bis_size
-  p.radius.y = p.y + Math.sin(p.angles.bis) * curr_bis_size
-  p.in.x  = p.x + Math.cos(p.angles.prev) * p.offset
-  p.in.y  = p.y + Math.sin(p.angles.prev) * p.offset
-  p.out.x = p.x + Math.cos(p.angles.next) * p.offset
-  p.out.y = p.y + Math.sin(p.angles.next) * p.offset
+  p.radius.x = p.x + Math.cos(p.angles.bis)  * curr_bis_size
+  p.radius.y = p.y + Math.sin(p.angles.bis)  * curr_bis_size
+  p.in.x     = p.x + Math.cos(p.angles.prev) * p.offset
+  p.in.y     = p.y + Math.sin(p.angles.prev) * p.offset
+  p.out.x    = p.x + Math.cos(p.angles.next) * p.offset
+  p.out.y    = p.y + Math.sin(p.angles.next) * p.offset
 }
 
 
