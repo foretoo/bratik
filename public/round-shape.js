@@ -6,11 +6,15 @@ const round_shape = (points, radius) => {
         const result = Object.assign(Object.assign({}, curr), { id,
             angles,
             vel,
-            offset, radius: { size: radius, x: curr.x, y: curr.y, hit: radius }, in: { x: curr.x, y: curr.y, length: prev_length, rest: prev_length }, out: { x: curr.x, y: curr.y, length: next_length, rest: next_length }, locked: false, get prev() { return getprev(id, rounded_points); },
-            get next() { return getnext(id, rounded_points); } });
+            offset, radius: { size: radius, x: curr.x, y: curr.y, hit: radius }, in: { x: curr.x, y: curr.y, length: prev_length, rest: prev_length }, out: { x: curr.x, y: curr.y, length: next_length, rest: next_length }, locked: false,
+        });
         return result;
     });
-    rounded_points.forEach((p) => {
+    rounded_points.forEach((p, id) => {
+        Object.assign(p, {
+            get prev() { return getprev(id, rounded_points); },
+            get next() { return getnext(id, rounded_points); }
+        })
         p.radius.hit = Math.min(p.out.length / (p.vel + p.next.vel), p.in.length / (p.vel + p.prev.vel));
     });
     rounded_points.sort((a, b) => a.radius.hit - b.radius.hit);
@@ -143,6 +147,7 @@ const find_angle = (A, B, C) => {
     return Math.acos((AB*AB + BC*BC - CA*CA) / (2*AB*BC))
   }
 };
+const PI = Math.PI, TAU = PI * 2
 const get_clock_dir = (angle1, angle2) => {
   const angle_diff = angle2 - angle1
   return (
