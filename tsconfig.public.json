@@ -6,5 +6,5 @@
     "noResolve": true,
     "outDir": "public",
   },
-  "files": ["src/demo.ts"]
+  "files": ["src/demo.ts", "src/lib/round-shape.ts"]
 }
