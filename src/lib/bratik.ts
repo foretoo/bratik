@@ -1,6 +1,5 @@
 import { Render, Point } from "./types"
 import { PI, TAU, CLOSE } from "./const"
-import { round_shape } from "./round-shape"
 
 let width: number,
     height: number,
@@ -200,7 +199,6 @@ export {
   ctx,
 
   shape,
-  round_shape,
   vertex,
   arc,
 

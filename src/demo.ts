@@ -1,8 +1,9 @@
 import "./style.sass"
 import {
-  getcanvas, circle, round_shape, shape, vertex, CLOSE, clear, fill, stroke, Point, arc, text, font, settext, PI
+  getcanvas, circle, shape, vertex, CLOSE, clear, fill, stroke, Point, arc, text, font, settext, PI
 } from "./lib/bratik"
 import { Linked, RoundedPoint } from "./lib/types"
+import { round_shape } from "./lib/round-shape"
 
 const { canvas } = getcanvas(),
       points: Point[] = [
