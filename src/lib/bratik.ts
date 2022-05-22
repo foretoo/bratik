@@ -1,4 +1,4 @@
-import { Render, Point } from "./types"
+import { Point } from "./types"
 import { PI, TAU, CLOSE } from "./const"
 
 let width: number,
@@ -174,22 +174,21 @@ const clear = (
 }
 
 
-let play: () => void,
-    stop: typeof play
+let rafid: number
 
-const loop: Render = (drawingCallBack) => {
+const stop = () => {
+  looping = false
+  cancelAnimationFrame(rafid)
+}
+
+const loop = (drawingCallBack: FrameRequestCallback) => {
   looping = true
-  let rAFid: number
-  play = () => {
+  const play = (time: number) => {
     frame++
-    drawingCallBack()
-    rAFid = requestAnimationFrame(play)
+    drawingCallBack(time)
+    if (looping) rafid = requestAnimationFrame(play)
   }
-  stop = () => {
-    looping = false
-    cancelAnimationFrame(rAFid)
-  }
-  play()
+  rafid = requestAnimationFrame(play)
 }
 
 
