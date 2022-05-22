@@ -1,5 +1,5 @@
 import { getcanvas, circle, shape, vertex, CLOSE, clear, fill, stroke, arc } from "../dist/bratik.es.js";
-import { round_shape } from "./round-shape.js";
+import round_shape from "https://unpkg.com/round-polygon@0.5.1/lib/round-polygon.es.js";
 const { canvas } = getcanvas(), points = [], grey = "#0007", bluish = "#00f7";
 let polygon = [];
 canvas.onpointerdown = (e) => {
@@ -34,7 +34,7 @@ const draw = () => {
         polygon.forEach((p, i) => {
             if (!i)
                 vertex(p.in.x, p.in.y);
-            arc(p.x, p.y, p.next.x, p.next.y, p.radius.size);
+            arc(p.x, p.y, p.next.x, p.next.y, p.arc.radius);
             vertex(p.next.in.x, p.next.in.y);
         });
         shape(CLOSE);
