@@ -116,20 +116,66 @@ const stroke = (color, width2) => {
 const clear = (x = 0, y = 0, w = width, h = height) => {
   ctx.clearRect(x, y, w, h);
 };
-let play, stop;
+let rafid;
+const stop = () => {
+  looping = false;
+  cancelAnimationFrame(rafid);
+};
 const loop = (drawingCallBack) => {
   looping = true;
-  let rAFid;
-  play = () => {
+  const play = (time) => {
     frame++;
-    drawingCallBack();
-    rAFid = requestAnimationFrame(play);
+    drawingCallBack(time);
+    if (looping)
+      rafid = requestAnimationFrame(play);
   };
-  stop = () => {
-    looping = false;
-    cancelAnimationFrame(rAFid);
+  rafid = requestAnimationFrame(play);
+};
+const easing = {
+  linear: (t) => t,
+  cubicIn: (t) => t * t * t,
+  cubicOut: (t) => 1 - (1 - t) * (1 - t) * (1 - t),
+  cubicInOut: (t) => t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) * (-2 * t + 2) * (-2 * t + 2) / 2
+};
+const animate = (duration = 500, ease = "cubicOut", callback) => {
+  let started = false, ended = false, start, timestamp, timeoutID, t;
+  return (target, prop) => {
+    if (started)
+      return;
+    const key = Object.keys(prop)[0];
+    if (!(key in target) || typeof target[key] !== "number" || typeof prop[key] !== "number")
+      return;
+    const value = prop[key], from = target[key], to = value - from;
+    const calc = (time) => {
+      timestamp = time ? Math.min(time - start, duration) : duration;
+      if (!time || timestamp === duration)
+        ended = true;
+      t = timestamp / duration;
+      t = easing[ease](t);
+      target[key] = from + t * to;
+      callback && callback(timestamp, t);
+    };
+    const end = () => {
+      !ended && calc();
+    };
+    const play = (time) => {
+      if (!started) {
+        started = true;
+        start = time;
+        timestamp = time - start;
+      }
+      if (timestamp < duration && !ended) {
+        clearTimeout(timeoutID);
+        calc(time);
+        timeoutID = setTimeout(end, duration - timestamp);
+        requestAnimationFrame(play);
+      } else {
+        started = false;
+        ended = false;
+      }
+    };
+    requestAnimationFrame(play);
   };
-  play();
 };
 
-export { CLOSE, PI, TAU, arc, circle, clear, ctx, draw, fill, font, frame, getcanvas, line, loop, looping, rect, settext, shape, stop, stroke, text, vertex };
+export { CLOSE, PI, TAU, animate, arc, circle, clear, fill, font, frame, getcanvas, line, loop, looping, rect, settext, shape, stop, stroke, text, vertex };

@@ -3,7 +3,7 @@
   "description": "Tiny (p5.js-like) toolkit to cakewalk through a 2D rendering context of Canvas API",
   "keywords": [ "canvas", "2d", "toolkit", "draw", "geometry", "round", "polygon", "corner" ],
   "author": "Sergey Borovikov",
-  "version": "0.3.2",
+  "version": "0.3.7",
   "module": "./dist/bratik.es.js",
   "main": "./dist/bratik.cjs.js",
   "types": "./dist/bratik.d.ts",
