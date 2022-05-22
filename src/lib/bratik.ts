@@ -191,6 +191,73 @@ const loop = (drawingCallBack: FrameRequestCallback) => {
   rafid = requestAnimationFrame(play)
 }
 
+const animate = (
+  duration: number = 500,
+  callback?: (time: number, t: number) => void,
+) => {
+
+  let started = false,
+      ended = false,
+      start: number,
+      timestamp: number,
+      timeoutID: number | undefined,
+      t: number
+  
+  return (
+    target: Record<string | number | symbol, unknown>,
+    prop: Record<string | number | symbol, number>,
+  ) => {
+    if (started) return
+
+    const key = Object.keys(prop)[0]
+    if (!(key in target) || typeof target[key] !== "number" || typeof prop[key] !== "number") return
+
+    const
+      value = prop[key],
+      from = target[key] as number,
+      to = value - from
+
+    const ease = (time?: number) => {
+      timestamp = time
+      ? Math.min(time - start, duration)
+      : duration
+
+      if (!time || timestamp === duration) ended = true
+      
+      t = timestamp / duration
+      t = t * t * t
+      target[key] = from + t * to
+
+      callback && callback(timestamp, t)
+    }
+
+    const end = () => {
+      !ended && ease()
+    }
+
+    const play = (time: number) => {
+      if (!started) {
+        started = true
+        start = time
+        timestamp = time - start
+      }
+      
+      if (timestamp < duration && !ended) {
+        clearTimeout(timeoutID)
+        ease(time)
+        timeoutID = setTimeout(end, duration - timestamp)
+        requestAnimationFrame(play)
+      }
+      else {
+        started = false
+        ended = false
+      }
+    }
+
+    requestAnimationFrame(play)
+  }
+}
+
 
 
 export {
@@ -218,6 +285,7 @@ export {
   loop,
   stop,
   looping,
+  animate,
 
   CLOSE,
   PI,
