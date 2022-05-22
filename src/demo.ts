@@ -6,7 +6,7 @@ import {
 const { width, height } = getcanvas(),
       grey = "#0007",
       pivot = { x: 0, y: 0 },
-      playX = animate(5555),
+      playX = animate(5555, "linear"),
       playY = animate(3333)
 
 const play = () => {

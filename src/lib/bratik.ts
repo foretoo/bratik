@@ -191,8 +191,16 @@ const loop = (drawingCallBack: FrameRequestCallback) => {
   rafid = requestAnimationFrame(play)
 }
 
+const easing: Record<string, (t: number) => number> = {
+  linear: (t) => t,
+  cubicIn: (t) => t * t * t,
+  cubicOut: (t) => 1 - (1 - t) * (1 - t) * (1 - t),
+  cubicInOut: (t) => t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) * (-2 * t + 2) * (-2 * t + 2)) / 2
+}
+
 const animate = (
   duration: number = 500,
+  ease: string = "cubicOut",
   callback?: (time: number, t: number) => void,
 ) => {
 
@@ -217,7 +225,7 @@ const animate = (
       from = target[key] as number,
       to = value - from
 
-    const ease = (time?: number) => {
+    const calc = (time?: number) => {
       timestamp = time
       ? Math.min(time - start, duration)
       : duration
@@ -225,14 +233,14 @@ const animate = (
       if (!time || timestamp === duration) ended = true
       
       t = timestamp / duration
-      t = t * t * t
+      t = easing[ease](t)
       target[key] = from + t * to
 
       callback && callback(timestamp, t)
     }
 
     const end = () => {
-      !ended && ease()
+      !ended && calc()
     }
 
     const play = (time: number) => {
@@ -244,7 +252,7 @@ const animate = (
       
       if (timestamp < duration && !ended) {
         clearTimeout(timeoutID)
-        ease(time)
+        calc(time)
         timeoutID = setTimeout(end, duration - timestamp)
         requestAnimationFrame(play)
       }
