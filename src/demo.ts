@@ -2,28 +2,20 @@ import "./style.sass"
 import {
   getcanvas, circle, shape, vertex, CLOSE, clear, fill, stroke, Point, arc, text, font, settext, PI
 } from "./lib/bratik"
-import { Linked, RoundedPoint } from "./lib/types"
-import { round_shape } from "./lib/round-shape"
+import round_polygon from "round-polygon"
 
 const { canvas } = getcanvas(),
-      points: Point[] = [
-        // { x: 157, y: 210 },{ x: 265, y: 202 },{ x: 304, y: 363 },{ x: 100, y: 373 },{ x: 221, y: 501 },
-        // { x: 230, y: 295 },{ x: 280, y: 172 },{ x: 112, y: 267 },{ x: 152, y: 493 },{ x: 339, y: 447 },
-        // { x: 280, y: 172 },{ x: 112, y: 267 },{ x: 152, y: 493 },{ x: 339, y: 447 },{ x: 112, y: 370 },
-        // { x: 218, y: 420 },{ x: 415, y: 287 },{ x: 252, y: 314 },{ x: 135, y: 126 },{ x: 142, y: 414 },
-        // { x: 165, y: 502 },{ x: 345, y: 417 },{ x: 351, y: 277 },{ x: 238, y: 261 },{ x: 214, y: 65 },
-        // { x: 265, y: 396 },{ x: 239, y: 204 },{ x: 132, y: 435 },{ x: 309, y: 543 },{ x: 412, y: 163 },
-      ],
+      points: Point[] = [],
       grey = "#0007",
       bluish = "#00f7"
-      
-let polygon: Linked<RoundedPoint>[] = []
+
+let polygon: ReturnType<typeof round_polygon> = []
 
 
 canvas.onpointerdown = (e: PointerEvent) => {
   const point = { x: e.pageX, y: e.pageY }
   assign_value(point, points, 9)
-  polygon = round_shape(points, +radiusrange.value)
+  polygon = round_polygon(points, +radiusrange.value)
   draw()
 }
 const radiusrange = document.querySelector("input")!
@@ -32,7 +24,7 @@ radiusvalue.textContent = radiusrange.value
 radiusrange.oninput = (e: Event) => {
   const target = e.target as HTMLInputElement
   radiusvalue.textContent = target.value
-  polygon = round_shape(points, +radiusrange.value)
+  polygon = round_polygon(points, +radiusrange.value)
   draw()
 }
 
@@ -55,9 +47,9 @@ const draw = () => {
     stroke("blue", 1)
     shape()
     polygon.forEach((p, i) => {
-      if (!i) vertex(p.in!.x, p.in!.y);
-      arc(p.x, p.y, p.next!.x, p.next!.y, p.radius.size);
-      vertex(p.next!.in!.x, p.next!.in!.y);
+      if (!i) vertex(p.in.x, p.in.y);
+      arc(p.x, p.y, p.next.x, p.next.y, p.arc.radius);
+      vertex(p.next.in.x, p.next.in.y);
     })
     shape(CLOSE)
 
