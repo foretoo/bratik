@@ -1,4 +1,3 @@
-import { Point } from "./types"
 import { PI, TAU, CLOSE } from "./const"
 
 let width: number,
@@ -270,7 +269,6 @@ const animate = (
 
 export {
   getcanvas,
-  ctx,
 
   shape,
   vertex,
@@ -287,7 +285,6 @@ export {
   fill,
   stroke,
   clear,
-  draw,
 
   frame,
   loop,
@@ -298,6 +295,4 @@ export {
   CLOSE,
   PI,
   TAU,
-
-  type Point,
 }
