@@ -25,5 +25,3 @@ export type FindLength = (
 export type FindAngle = (
   A: Point, B: Point, C?: Point,
 ) => number
-
-export type Render = (fn: () => void) => void
