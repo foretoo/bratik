@@ -1,4 +1,5 @@
 import "./style.sass"
+import { assign_value } from "./lib/utils"
 import {
   getcanvas, circle, shape, vertex, CLOSE, clear, fill, stroke, Point, arc, text, font, settext, PI
 } from "./lib/bratik"
@@ -86,18 +87,5 @@ const draw = () => {
     //         outy = y - dir * Math.sin(bis - PI / 2) * 24
     //   text(`out`, outx, outy)
     // })
-  }
-}
-
-
-const assign_value = <T>(
-  value: T, arr: T[], length: number
-) => {
-  if (arr.length < length) arr.push(value)
-  else {
-    for (let i = 0; i < arr.length - 1; i++) {
-      arr[i] = arr[i + 1]
-    }
-    arr[length - 1] = value
   }
 }
