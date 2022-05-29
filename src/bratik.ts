@@ -225,7 +225,7 @@ const easing: Record<string, (t: number) => number> = {
 const animate = (
   duration: number = 500,
   ease: string = "cubicOut",
-  callback?: (time: number, t: number) => void,
+  callback?: (t: number, time: number) => void,
 ) => {
 
   let started = false,
@@ -233,26 +233,31 @@ const animate = (
       start: number,
       timestamp: number,
       timeoutID: number | undefined,
-      t: number
+      t: number,
+
+      hasTarget: boolean,
+      keys: string[],
+      froms: number[],
+      tos: number[]
   
   return (
-    target: Record<string | number | symbol, unknown>,
-    prop: Record<string | number | symbol, number>,
+    target?: Record<string | number | symbol, unknown>,
+    prop?: Record<string | number | symbol, number>,
   ) => {
     if (started) return
 
-    const
-      prekeys = Object.keys(prop),
+    if (target && prop) {
+      const prekeys = Object.keys(prop)
       keys = prekeys.reduce((acc: string[], key) => (
         !(key in target) || typeof target[key] !== "number" || typeof prop[key] !== "number"
           ? acc : acc.concat(key)
       ), [])
-
-    if (!keys.length) return
-
-    const
-      froms = keys.map((key) => target[key] as number),
-      tos = keys.map((key, i) => prop[key] - froms[i])
+      if (keys.length) {
+        hasTarget = true
+        froms = keys.map((key) => target[key] as number)
+        tos = keys.map((key, i) => prop[key] - froms[i])
+      }
+    }
 
     const calc = (time?: number) => {
       timestamp = time
@@ -263,9 +268,9 @@ const animate = (
       
       t = timestamp / duration
       t = easing[ease](t)
-      keys.forEach((key, i) => target[key] = froms[i] + t * tos[i])
+      hasTarget && keys.forEach((key, i) => target![key] = froms[i] + t * tos[i])
 
-      callback && callback(timestamp, t)
+      callback && callback(t, timestamp)
     }
 
     const end = () => {
