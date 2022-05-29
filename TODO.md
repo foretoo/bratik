@@ -1,5 +1,6 @@
-- [] add curves
-- [] add gradients
-- [x] add simple animating tool
-- [x] provide devicePixelRatio to every number value
-- [x] font() should remember font-family
+- add curves
+- add gradients
+- documentation
+- ~~add simple animating tool~~
+- ~~provide devicePixelRatio to every number value~~
+- ~~font() should remember font-family~~
