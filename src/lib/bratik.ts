@@ -4,6 +4,7 @@ let width: number,
     height: number,
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
+    pr: number,
 
     frame = 0,
     looping = false
@@ -18,24 +19,41 @@ const getcanvas = (
   ctx = canvas.getContext("2d")!
   document.body.prepend(canvas)
   canvas.setAttribute("id", id ? id : "canvas")
+  pr = window.devicePixelRatio
 
   if (w) {
     width = w
     height = h ? h : width
     canvas.setAttribute("style", `width:${width}px;height:${height}px;`)
-    canvas.setAttribute("width", width.toString())
-    canvas.setAttribute("height", height.toString())
+    canvas.setAttribute("width", (width * pr).toString())
+    canvas.setAttribute("height", (height * pr).toString())
   }
   else {
     canvas.setAttribute("style", "width:100%;height:100%;");
     ({ width, height } = canvas.getBoundingClientRect())
-    canvas.setAttribute("width", width.toString())
-    canvas.setAttribute("height", height.toString())
+    canvas.setAttribute("width", (width * pr).toString())
+    canvas.setAttribute("height", (height * pr).toString())
   }
+
   ctx.fillStyle = "white"
   ctx.strokeStyle = "black"
+  ctx.lineCap = "round"
+  ctx.lineJoin = "round"
   ctx.imageSmoothingEnabled = true
+
   return { width, height, ctx, canvas }
+}
+
+
+
+const pxratio = (val?: number): number => {
+  if (val === undefined) return window.devicePixelRatio
+  else {
+    pr = val
+    canvas.width = width * pr
+    canvas.height = height * pr
+    return val
+  }
 }
 
 
@@ -55,10 +73,10 @@ const shape = (arg?: string) => {
 const vertex = (
   x: number, y: number
 ) => {
-  if (shaping) ctx.lineTo(x, y)
+  if (shaping) ctx.lineTo(x * pr, y * pr)
   else {
     shaping = true
-    ctx.moveTo(x, y)
+    ctx.moveTo(x * pr, y * pr)
   }
 }
 const arc = (
@@ -66,7 +84,7 @@ const arc = (
   x2: number, y2: number,
   r: number
 ) => {
-  ctx.arcTo(x1, y1, x2, y2, r)
+  ctx.arcTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, r * pr)
 }
 
 const line = (
@@ -74,8 +92,8 @@ const line = (
   x2: number, y2: number,
 ) => {
   ctx.beginPath()
-  ctx.moveTo(x1, y1)
-  ctx.lineTo(x2, y2)
+  ctx.moveTo(x1 * pr, y1 * pr)
+  ctx.lineTo(x2 * pr, y2 * pr)
   draw()
 }
 const circle = (
@@ -83,7 +101,7 @@ const circle = (
   r = 10
 ) => {
   ctx.beginPath()
-  ctx.arc(x, y, r, 0, TAU)
+  ctx.arc(x * pr, y * pr, r * pr, 0, TAU)
   draw()
 }
 const rect = (
@@ -93,31 +111,32 @@ const rect = (
 ) => {
   ctx.beginPath()
   if (r) {
-    ctx.moveTo(x + r, y)
-    ctx.arcTo(x + w, y, x + w, y + h, r)
-    ctx.arcTo(x + w, y + h, x, y + h, r)
-    ctx.arcTo(x, y + h, x, y, r)
-    ctx.arcTo(x, y, x + w, y, r)
+    ctx.moveTo((x + r) * pr, y * pr)
+    ctx.arcTo((x + w) * pr, y * pr, (x + w) * pr, (y + h) * pr, r * pr)
+    ctx.arcTo((x + w) * pr, (y + h) * pr, x * pr, (y + h) * pr, r * pr)
+    ctx.arcTo(x * pr, (y + h) * pr, x * pr, y * pr, r * pr)
+    ctx.arcTo(x * pr, y * pr, (x + w) * pr, y * pr, r * pr)
   }
-  else ctx.rect(x, y, w, h)
+  else ctx.rect(x * pr, y * pr, w * pr, h * pr)
   draw()
 }
 
 
-
+let font_family = "sans-serif"
 const font = (
  size: number | string, family?: string, options?: string
 ) => {
   let fontsize = "",
       fontoptions = options ? options : "",
-      fontfamily = family ? family : "sans-serif"
+      fontfamily = font_family
+
+  if (family) font_family = fontfamily = family
   
-  if (typeof size === "number") fontsize = size.toString() + "px"
+  if (typeof size === "number") fontsize = (size * pr) + "px"
   if (typeof size === "string") {
     const temp = size.match(/^(\d+)([a-z%]*)\/?(\d*)([a-z%]*)$/)
     if (temp) {
-      fontsize = temp[1]
-      fontsize += temp[2] ? temp[2] : "px"
+      fontsize = (parseFloat(temp[1]) * pr) + (temp[2] ? temp[2] : "px")
       if (temp[3]) {
         fontsize += `/${temp[3]}`
         fontsize += temp[4] ? temp[4] : "px"
@@ -141,8 +160,10 @@ const settext = (
 const text = (
   content: string, x: number, y: number, width?: number
 ) => {
-  ctx.fillText(content, x, y, width || text_width)
-  ctx.strokeText(content, x, y, width || text_width)
+  let size = width || text_width
+  size = size !== undefined ? size * pr : size
+  ctx.fillText(content, x * pr, y * pr, size)
+  ctx.strokeText(content, x * pr, y * pr, size)
 }
 
 
@@ -157,11 +178,15 @@ const fill = (color: string | null) => {
 }
 const stroke = (
   color: string | null,
-  width?: number
+  width?: number,
+  cap?: CanvasLineCap,
+  join?: CanvasLineJoin,
 ) => {
   if (color === null) ctx.strokeStyle = "transparent"
   else ctx.strokeStyle = color
-  if (width !== undefined) ctx.lineWidth = width
+  if (width !== undefined) ctx.lineWidth = width * pr
+  if (cap !== undefined) ctx.lineCap = cap
+  if (join !== undefined) ctx.lineJoin = join
 }
 const clear = (
   x = 0,
@@ -169,7 +194,7 @@ const clear = (
   w = width,
   h = height,
 ) => {
-  ctx.clearRect(x, y, w, h)
+  ctx.clearRect(x * pr, y * pr, w * pr, h * pr)
 }
 
 
@@ -216,13 +241,18 @@ const animate = (
   ) => {
     if (started) return
 
-    const key = Object.keys(prop)[0]
-    if (!(key in target) || typeof target[key] !== "number" || typeof prop[key] !== "number") return
+    const
+      prekeys = Object.keys(prop),
+      keys = prekeys.reduce((acc: string[], key) => (
+        !(key in target) || typeof target[key] !== "number" || typeof prop[key] !== "number"
+          ? acc : acc.concat(key)
+      ), [])
+
+    if (!keys.length) return
 
     const
-      value = prop[key],
-      from = target[key] as number,
-      to = value - from
+      froms = keys.map((key) => target[key] as number),
+      tos = keys.map((key, i) => prop[key] - froms[i])
 
     const calc = (time?: number) => {
       timestamp = time
@@ -233,7 +263,7 @@ const animate = (
       
       t = timestamp / duration
       t = easing[ease](t)
-      target[key] = from + t * to
+      keys.forEach((key, i) => target[key] = froms[i] + t * tos[i])
 
       callback && callback(timestamp, t)
     }
@@ -269,6 +299,7 @@ const animate = (
 
 export {
   getcanvas,
+  pxratio,
 
   shape,
   vertex,

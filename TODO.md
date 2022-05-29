@@ -1,4 +1,5 @@
-- [] prepare example for first v0.2.1 release
-- [] add linked list
-- [] add flag to prevent round oversteping and implement its functionality
-- [] add simple animating tool
+- [] add curves
+- [] add gradients
+- [x] add simple animating tool
+- [x] provide devicePixelRatio to every number value
+- [x] font() should remember font-family
