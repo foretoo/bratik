@@ -1,6 +1,6 @@
 import "./style.sass"
 import {
-  getcanvas, clear, fill, stroke, loop, line, animate, circle, rect, font, settext, text, pxratio
+  getcanvas, clear, fill, stroke, loop, line, animate, circle, rect, font, settext, text
 } from "./lib/bratik"
 
 const { width, height } = getcanvas(),
@@ -10,13 +10,14 @@ const { width, height } = getcanvas(),
       playY = animate(3333)
 
 font(20, "monospace")
-settext("right", "middle")
+settext("right")
 
 const play = () => {
   if (pivot.x === 0) playX(pivot, { x: width })
   if (pivot.x === width) playX(pivot, { x: 0 })
   if (pivot.y === 0) playY(pivot, { y: height })
   if (pivot.y === height) playY(pivot, { y: 0 })
+
   clear()
   fill(null)
   stroke(grey, 1)
