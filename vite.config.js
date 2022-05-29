@@ -5,12 +5,12 @@ import dts from "vite-plugin-dts"
 export default defineConfig({
   server: {
     host: true,
-    open: "/src/index.html",
+    open: "/src/demo/index.html",
   },
   publicDir: false,
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/lib/bratik.ts"),
+      entry: path.resolve(__dirname, "src/bratik.ts"),
       name: "bratik",
       formats: [ "es" ]
     },

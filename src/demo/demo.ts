@@ -1,7 +1,7 @@
 import "./style.sass"
 import {
   getcanvas, clear, fill, stroke, loop, line, animate, circle, rect, font, settext, text
-} from "./lib/bratik"
+} from "../bratik"
 
 const { width, height } = getcanvas(),
       grey = "#0007",
