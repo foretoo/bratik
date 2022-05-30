@@ -12,8 +12,9 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/bratik.ts"),
       name: "bratik",
-      formats: [ "es" ]
+      formats: [ "es", "cjs", "iife" ]
     },
+    outDir: "lib",
     target: "esnext",
     emptyOutDir: false,
   },

@@ -1,13 +1,13 @@
 {
   "name": "bratik",
-  "description": "Tiny (p5.js-like) toolkit to cakewalk through a 2D rendering context of Canvas API",
-  "keywords": [ "canvas", "2d", "toolkit", "draw", "geometry", "round", "polygon", "corner" ],
+  "description": "Tiny, p5.js-like, typed toolkit to cakewalk through a 2D rendering context of Canvas API",
+  "keywords": [ "canvas", "2d", "toolkit", "draw", "geometry", "animate" ],
   "author": "Sergey Borovikov",
-  "version": "0.3.7",
-  "module": "./dist/bratik.es.js",
-  "main": "./dist/bratik.cjs.js",
-  "types": "./dist/bratik.d.ts",
-  "files": [ "/dist" ],
+  "version": "0.4.0",
+  "module": "./lib/bratik.es.js",
+  "main": "./lib/bratik.cjs.js",
+  "types": "./lib/bratik.d.ts",
+  "files": [ "/lib" ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/foretoo/bratik.git"
@@ -29,7 +29,6 @@
     "eslint-plugin-import": "^2.26.0",
     "jest": "^28.1.0",
     "sass": "^1.51.0",
-    "round-polygon": "^0.5.1",
     "typescript": "^4.5.4",
     "vite": "^2.9.7",
     "vite-plugin-dts": "^1.1.1"
