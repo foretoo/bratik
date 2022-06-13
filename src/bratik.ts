@@ -153,17 +153,17 @@ const settext = (
   base?: CanvasTextBaseline,
   width?: number
 ) => {
-  ctx.textAlign = align || "start"
-  ctx.textBaseline = base || "alphabetic"
-  text_width = width
+  ctx.textAlign = align
+  base && (ctx.textBaseline = base)
+  width && (text_width = width)
 }
 const text = (
-  content: string, x: number, y: number, width?: number
+  content: string | number, x: number, y: number, width?: number
 ) => {
   let size = width || text_width
   size = size !== undefined ? size * pr : size
-  ctx.fillText(content, x * pr, y * pr, size)
-  ctx.strokeText(content, x * pr, y * pr, size)
+  ctx.fillText(`${content}`, x * pr, y * pr, size)
+  ctx.strokeText(`${content}`, x * pr, y * pr, size)
 }
 
 
@@ -232,7 +232,7 @@ const animate = (
       ended = false,
       start: number,
       timestamp: number,
-      timeoutID: number | undefined,
+      tmoid: number | undefined,
       t: number,
 
       hasTarget: boolean,
@@ -285,9 +285,9 @@ const animate = (
       }
       
       if (timestamp < duration && !ended) {
-        clearTimeout(timeoutID)
+        clearTimeout(tmoid)
         calc(time)
-        timeoutID = setTimeout(end, duration - timestamp)
+        tmoid = setTimeout(end, duration - timestamp)
         requestAnimationFrame(play)
       }
       else {
