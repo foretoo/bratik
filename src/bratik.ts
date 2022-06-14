@@ -246,13 +246,13 @@ const animate = ({
     keys: (string | number | symbol)[],
     froms: number[],
     tos: number[],
-    playerid: number | undefined,
-    enderid: number | undefined,
+    rafic: number | undefined,
+    tmoid: number | undefined,
     starttime: number
 
 
 
-  const data = {
+  const it = {
     dur,
     ease,
     started: false,
@@ -268,79 +268,108 @@ const animate = ({
     onend,
   }
 
-  const pause = () => {
-    if (!playerid) return
-    data.paused = true
-    data.onpause && data.onpause()
-    clearTimeout(enderid)
-    cancelAnimationFrame(playerid)
+  const paus = () => {
+    if (!rafic) return
+    it.paused = true
+    it.onpause && it.onpause()
+    clearTimeout(tmoid)
+    cancelAnimationFrame(rafic)
   }
 
   const play = () => {
-    if (!data.paused) return
-    playerid = requestAnimationFrame(player)
+    if (!it.paused && !it.ended) return
+    if (it.ended) reset()
+    fire()
   }
 
-  const to = (
+  const yo = (
     _target: Record<string | number | symbol, unknown>,
     props: Record<string | number | symbol, number>
   ) => {
-    if (data.started && !data.ended) return
+    if (it.started && !it.ended) return
 
     target = _target
     keys = Object.keys(props)
     froms = keys.map((key) => target![key] as number)
     tos = keys.map((key, i) => props[key] - froms[i])
 
-    data.frame = 0
-    data.time = 0
-    data.t = 0
-    data.started = false
-    data.ended = false
+    reset()
+    fire()
+  }
 
-    playerid = requestAnimationFrame(player)
+  const fire = () => {
+    rafic = loop
+      ? requestAnimationFrame(looper)
+      : requestAnimationFrame(player)
+  }
+
+  const reset = () => {
+    it.frame = 0
+    it.time = 0
+    it.t = 0
+    it.started = false
+    it.ended = false
   }
 
   const tick = () => {
-    data.t = easing[ease](data.time / data.dur)
-    keys.forEach((key, i) => target![key] = froms[i] + data.t * tos[i])
+    it.t = easing[ease](it.time / it.dur)
+    keys.forEach((key, i) => target![key] = froms[i] + it.t * tos[i])
     ontick && ontick()
-    data.ended && onend && onend()
-    data.frame++
+    it.ended && onend && onend()
+    it.frame++
   }
 
   const ender = () => {
-    data.time = data.dur
-    data.ended = true
+    it.time = it.dur
+    it.ended = true
     tick()
-    cancelAnimationFrame(playerid!)
+    cancelAnimationFrame(rafic!)
   }
 
-  const player = () => {
-    if (!data.started) {
-      data.started = true
+  const looper = () => {
+    if (!it.started) {
+      it.started = true
       onstart && onstart()
       starttime = performance.now()
     }
-    if (data.paused) {
-      data.paused = false
-      starttime = performance.now() - data.time
+    if (it.paused) {
+      it.paused = false
+      starttime = performance.now() - it.time
     }
 
-    clearTimeout(enderid)
-    data.time = Math.min(performance.now() - starttime, data.dur)
-    if (data.time === data.dur) data.ended = true
+    it.time = Math.min(performance.now() - starttime, it.dur)
+    if (it.time === it.dur) {
+      it.time = 0
+      starttime = performance.now()
+    }
+    tick()
+    rafic = requestAnimationFrame(looper)
+  }
+
+  const player = () => {
+    
+    if (!it.started) {
+      it.started = true
+      onstart && onstart()
+      starttime = performance.now()
+    }
+    if (it.paused) {
+      it.paused = false
+      starttime = performance.now() - it.time
+    }
+
+    clearTimeout(tmoid)
+    it.time = Math.min(performance.now() - starttime, it.dur)
+    if (it.time === it.dur) it.ended = true
     tick()
 
-    if (!data.ended) {
-      enderid = setTimeout(ender, data.dur - data.time)
-      playerid = requestAnimationFrame(player)
+    if (!it.ended) {
+      tmoid = setTimeout(ender, it.dur - it.time)
+      rafic = requestAnimationFrame(player)
     }
   }
 
-  return Object.assign(data, {
-    onstart, ontick, onend, pause, play, to
-  })
+  return Object.assign(it, { paus, play, yo })
 }
 
 
