@@ -6,17 +6,17 @@ import {
 const { width, height } = getcanvas(),
       grey = "#0007",
       pivot = { x: 0, y: 0 },
-      playX = animate(5555, "linear"),
-      playY = animate(3333)
+      playX = animate({ dur: 5555 }),
+      playY = animate({ dur: 3333 })
 
 font(20, "monospace")
 settext("right")
 
 const play = () => {
-  if (pivot.x === 0) playX(pivot, { x: width })
-  if (pivot.x === width) playX(pivot, { x: 0 })
-  if (pivot.y === 0) playY(pivot, { y: height })
-  if (pivot.y === height) playY(pivot, { y: 0 })
+  if (pivot.x === 0) playX.to(pivot, { x: width })
+  if (pivot.x === width) playX.to(pivot, { x: 0 })
+  if (pivot.y === 0) playY.to(pivot, { y: height })
+  if (pivot.y === height) playY.to(pivot, { y: 0 })
 
   clear()
   fill(null)
