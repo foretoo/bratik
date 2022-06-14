@@ -6,17 +6,17 @@ import {
 const { width, height } = getcanvas(),
       grey = "#0007",
       pivot = { x: 0, y: 0 },
-      playX = animate({ dur: 5555 }),
-      playY = animate({ dur: 3333 })
+      ax = animate({ dur: 5555, loop: true }),
+      ay = animate({ dur: 3333, ease: "cubicInOut" })
 
 font(20, "monospace")
 settext("right")
 
+ax.yo(pivot, { x: width })
+
 const play = () => {
-  if (pivot.x === 0) playX.to(pivot, { x: width })
-  if (pivot.x === width) playX.to(pivot, { x: 0 })
-  if (pivot.y === 0) playY.to(pivot, { y: height })
-  if (pivot.y === height) playY.to(pivot, { y: 0 })
+  if (pivot.y === 0) ay.yo(pivot, { y: height })
+  if (pivot.y === height) ay.yo(pivot, { y: 0 })
 
   clear()
   fill(null)
@@ -36,3 +36,7 @@ const play = () => {
 
 }
 loop(play)
+
+document.onkeydown = (e: KeyboardEvent) => {
+  if (e.code === "Space") ax.paused ? ax.play() : ax.paus()
+}
