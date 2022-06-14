@@ -1,8 +1,3 @@
-type Point = {
-  x: number,
-  y: number,
-}
-
 type Ease = "linear" | "cubicIn" | "cubicOut" | "cubicInOut"
 
 type AnimateProps = {
@@ -19,7 +14,6 @@ type AnimateCallBacks = "onstart" | "ontick" | "onpause" | "onend"
 type AnimateDefaults = Required<Omit<AnimateProps, AnimateCallBacks>>
 
 export {
-  type Point,
   type Ease,
   type AnimateProps,
   type AnimateDefaults,
