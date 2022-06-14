@@ -1,5 +1,6 @@
 - add curves
 - add gradients
+- ~~make animate loopable~~
 - ~~add pause/play, as well as onstart, ontick, onpause, onend methods to animate()~~
 - ~~documentation~~
 - ~~add simple animating tool~~
