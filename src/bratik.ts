@@ -302,11 +302,10 @@ const animate = ({
   }
 
   const tick = () => {
-    data.t = data.time / data.dur
-    data.t = easing[ease](data.t)
+    data.t = easing[ease](data.time / data.dur)
     keys.forEach((key, i) => target![key] = froms[i] + data.t * tos[i])
     ontick && ontick()
-    data.ended === true && onend && onend()
+    data.ended && onend && onend()
     data.frame++
   }
 
