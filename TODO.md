@@ -1,6 +1,7 @@
 - add curves
 - add gradients
-- documentation
+- ~~add pause/play, as well as onstart, ontick, onpause, onend methods to animate()~~
+- ~~documentation~~
 - ~~add simple animating tool~~
 - ~~provide devicePixelRatio to every number value~~
 - ~~font() should remember font-family~~

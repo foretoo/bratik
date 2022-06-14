@@ -1,4 +1,5 @@
 import { PI, TAU, CLOSE } from "./const"
+import { AnimateDefaults, AnimateProps, Ease } from "./types"
 
 let width: number,
     height: number,
@@ -196,6 +197,10 @@ const clear = (
 ) => {
   ctx.clearRect(x * pr, y * pr, w * pr, h * pr)
 }
+const bg = (color: string) => {
+  fill(color)
+  rect(0, 0, width, height)
+}
 
 
 let rafid: number
@@ -215,89 +220,128 @@ const loop = (drawingCallBack: FrameRequestCallback) => {
   rafid = requestAnimationFrame(play)
 }
 
-const easing: Record<string, (t: number) => number> = {
+const easing: Record<Ease, (t: number) => number> = {
   linear: (t) => t,
   cubicIn: (t) => t * t * t,
   cubicOut: (t) => 1 - (1 - t) * (1 - t) * (1 - t),
   cubicInOut: (t) => t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) * (-2 * t + 2) * (-2 * t + 2)) / 2
 }
 
-const animate = (
-  duration: number = 500,
-  ease: string = "cubicOut",
-  callback?: (t: number, time: number) => void,
-) => {
+const defaults: AnimateDefaults = {
+  dur: 1000, loop: false, ease: "linear"
+}
 
-  let started = false,
-      ended = false,
-      start: number,
-      timestamp: number,
-      tmoid: number | undefined,
-      t: number,
+const animate = ({
+  dur = 1000,
+  loop = false,
+  ease = "linear",
+  onstart,
+  ontick,
+  onpause,
+  onend
+}: AnimateProps = defaults) => {
 
-      hasTarget: boolean,
-      keys: string[],
-      froms: number[],
-      tos: number[]
-  
-  return (
-    target?: Record<string | number | symbol, unknown>,
-    prop?: Record<string | number | symbol, number>,
-  ) => {
-    if (started) return
+  let
+    target: Record<string | number | symbol, unknown> | undefined,
+    keys: (string | number | symbol)[],
+    froms: number[],
+    tos: number[],
+    playerid: number | undefined,
+    enderid: number | undefined,
+    starttime: number
 
-    if (target && prop) {
-      const prekeys = Object.keys(prop)
-      keys = prekeys.reduce((acc: string[], key) => (
-        !(key in target) || typeof target[key] !== "number" || typeof prop[key] !== "number"
-          ? acc : acc.concat(key)
-      ), [])
-      if (keys.length) {
-        hasTarget = true
-        froms = keys.map((key) => target[key] as number)
-        tos = keys.map((key, i) => prop[key] - froms[i])
-      }
-    }
 
-    const calc = (time?: number) => {
-      timestamp = time
-      ? Math.min(time - start, duration)
-      : duration
 
-      if (!time || timestamp === duration) ended = true
-      
-      t = timestamp / duration
-      t = easing[ease](t)
-      hasTarget && keys.forEach((key, i) => target![key] = froms[i] + t * tos[i])
+  const data = {
+    dur,
+    ease,
+    started: false,
+    paused: false,
+    ended: false,
+    frame: 0,
+    time: 0,
+    t: 0,
 
-      callback && callback(t, timestamp)
-    }
-
-    const end = () => {
-      !ended && calc()
-    }
-
-    const play = (time: number) => {
-      if (!started) {
-        started = true
-        start = time
-        timestamp = time - start
-      }
-      
-      if (timestamp < duration && !ended) {
-        clearTimeout(tmoid)
-        calc(time)
-        tmoid = setTimeout(end, duration - timestamp)
-        requestAnimationFrame(play)
-      }
-      else {
-        started = false
-        ended = false
-      }
-    }
-
-    requestAnimationFrame(play)
+    onstart,
+    ontick,
+    onpause,
+    onend,
   }
+
+  const pause = () => {
+    if (!playerid) return
+    data.paused = true
+    data.onpause && data.onpause()
+    clearTimeout(enderid)
+    cancelAnimationFrame(playerid)
+  }
+
+  const play = () => {
+    if (!data.paused) return
+    playerid = requestAnimationFrame(player)
+  }
+
+  const to = (
+    _target: Record<string | number | symbol, unknown>,
+    props: Record<string | number | symbol, number>
+  ) => {
+    if (data.started && !data.ended) return
+
+    target = _target
+    keys = Object.keys(props)
+    froms = keys.map((key) => target![key] as number)
+    tos = keys.map((key, i) => props[key] - froms[i])
+
+    data.frame = 0
+    data.time = 0
+    data.t = 0
+    data.started = false
+    data.ended = false
+
+    playerid = requestAnimationFrame(player)
+  }
+
+  const tick = () => {
+    data.t = data.time / data.dur
+    data.t = easing[ease](data.t)
+    keys.forEach((key, i) => target![key] = froms[i] + data.t * tos[i])
+    ontick && ontick()
+    data.ended === true && onend && onend()
+    data.frame++
+  }
+
+  const ender = () => {
+    data.time = data.dur
+    data.ended = true
+    tick()
+    cancelAnimationFrame(playerid!)
+  }
+
+  const player = () => {
+    if (!data.started) {
+      data.started = true
+      onstart && onstart()
+      starttime = performance.now()
+    }
+    if (data.paused) {
+      data.paused = false
+      starttime = performance.now() - data.time
+    }
+
+    clearTimeout(enderid)
+    data.time = Math.min(performance.now() - starttime, data.dur)
+    if (data.time === data.dur) data.ended = true
+    tick()
+
+    if (!data.ended) {
+      enderid = setTimeout(ender, data.dur - data.time)
+      playerid = requestAnimationFrame(player)
+    }
+  }
+
+  return Object.assign(data, {
+    onstart, ontick, onend, pause, play, to
+  })
 }
 
 
@@ -321,6 +365,7 @@ export {
   fill,
   stroke,
   clear,
+  bg,
 
   frame,
   loop,
