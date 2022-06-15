@@ -1,6 +1,6 @@
 import "./style.sass"
 import {
-  getcanvas, clear, fill, stroke, loop, line, animate, circle, rect, font, settext, text, gradient, LINEAR, bg, RADIAL, CONIC, PI, frame
+  getcanvas, clear, fill, stroke, loop, stop, line, animate, circle, rect, font, settext, text, gradient, LINEAR, bg, RADIAL, CONIC, PI, frame, looping
 } from "../bratik"
 
 const { width, height } = getcanvas(),
@@ -22,6 +22,7 @@ const rndgrey = () => {
   const color = rnd8bit()
   return `rgb(${color},${color},${color})`
 }
+
 let i: number
 const circcolors: { p: number, color: string }[] = []
 i = circnum
@@ -81,5 +82,16 @@ const play = () => {
 loop(play)
 
 document.onkeydown = (e: KeyboardEvent) => {
-  if (e.code === "Space") ax.paused ? ax.play() : ax.paus()
+  if (e.code === "Space") {
+    if (looping) {
+      ax.paus()
+      ay.paus()
+      stop()
+    }
+    else {
+      ax.play()
+      ay.play()
+      loop(play)
+    }
+  }
 }
