@@ -1,5 +1,5 @@
 import { PI, TAU, CLOSE } from "./const"
-import { AnimateDefaults, AnimateProps, Ease } from "./types"
+import { AnimateDefaults, AnimateProps, Ease, Gradient, GradientType } from "./types"
 
 let width: number,
     height: number,
@@ -169,16 +169,55 @@ const text = (
 
 
 
+const
+  LINEAR = "LINEAR",
+  CONIC = "CONIC",
+  RADIAL = "RADIAL"
+
+const gradient = (
+  type: GradientType,
+  ...options: number[]
+): Gradient => {
+
+  const it = {} as Gradient
+
+  if (type === LINEAR)
+    it.reset = () => {
+      const [ x1, y1, x2, y2 ] = options
+      it.image = ctx.createLinearGradient(x1 * pr, y1 * pr, x2 * pr, y2 * pr)
+    }
+
+  else if (type === CONIC)
+    it.reset = (angle?: number) => {
+      const a = angle || options[0], x = options[1], y = options[2]
+      it.image = ctx.createConicGradient(a * pr, x * pr, y * pr)
+    }
+
+  else if (type === RADIAL)
+    it.reset = () => {
+      const [ x1, y1, r1, x2, y2, r2 ] = options
+      it.image = ctx.createRadialGradient(x1 * pr, y1 * pr, r1 * pr, x2 * pr, y2 * pr, r2 * pr)
+    }
+
+  it.reset()
+
+  it.add = (offset, color) => it.image.addColorStop(offset, color)
+
+  return it
+}
+
+
+
 const draw = () => {
   ctx.fill()
   ctx.stroke()
 }
-const fill = (color: string | null) => {
+const fill = (color: string | CanvasGradient | null) => {
   if (color === null) ctx.fillStyle = "transparent"
   else ctx.fillStyle = color
 }
 const stroke = (
-  color: string | null,
+  color: string | CanvasGradient | null,
   width?: number,
   cap?: CanvasLineCap,
   join?: CanvasLineJoin,
@@ -197,7 +236,7 @@ const clear = (
 ) => {
   ctx.clearRect(x * pr, y * pr, w * pr, h * pr)
 }
-const bg = (color: string) => {
+const bg = (color: string | CanvasGradient) => {
   fill(color)
   rect(0, 0, width, height)
 }
@@ -390,6 +429,10 @@ export {
   settext,
   text,
 
+  LINEAR,
+  CONIC,
+  RADIAL,
+  gradient,
   fill,
   stroke,
   clear,
