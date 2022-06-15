@@ -20,6 +20,7 @@ or by script tag in your html page:
 ```html
 <script src="https://unpkg.com/bratik@latest/lib/bratik.iife.js"></script>
 ```
+This will create the global variable `bratik`
 
 ## Usage
 
