@@ -87,6 +87,14 @@ const arc = (
 ) => {
   ctx.arcTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, r * pr)
 }
+const curve = (
+  x1: number, y1: number,
+  x2: number, y2: number,
+  x3?: number, y3?: number
+) => {
+  if (x3 && y3) ctx.bezierCurveTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, x3 * pr, y3 * pr)
+  else ctx.quadraticCurveTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr)
+}
 
 const line = (
   x1: number, y1: number,
@@ -420,6 +428,7 @@ export {
   shape,
   vertex,
   arc,
+  curve,
 
   line,
   circle,
