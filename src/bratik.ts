@@ -306,12 +306,13 @@ const animate = ({
 
   let
     tar: Record<string | number | symbol, unknown> | undefined,
-    keys: (string | number | symbol)[],
-    froms: number[],
-    tos: number[],
+    keys: (string | number | symbol)[] = [],
+    froms: number[] = [],
+    tos: number[] = [],
     rafic: number | undefined,
     tmoid: number | undefined,
-    starttime: number
+    starttime: number,
+    restarttime: boolean = false
 
 
 
@@ -342,6 +343,8 @@ const animate = ({
   const play = () => {
     if (it.started && !it.paused && !it.ended) return
     if (it.ended) reset()
+    it.paused = false
+    restarttime = true
     fire()
   }
 
@@ -351,8 +354,8 @@ const animate = ({
   ) => {
     if (it.started && !it.ended) return
 
-    tar = target || {}
-    keys = Object.keys(props || {})
+    tar = target
+    keys = Object.keys(props)
     froms = keys.map((key) => tar![key] as number)
     tos = keys.map((key, i) => props[key] - froms[i])
 
@@ -395,8 +398,8 @@ const animate = ({
       onstart && onstart()
       starttime = performance.now()
     }
-    if (it.paused) {
-      it.paused = false
+    if (restarttime) {
+      restarttime = false
       starttime = performance.now() - it.time
     }
 
@@ -406,7 +409,7 @@ const animate = ({
       starttime = performance.now()
     }
     tick()
-    rafic = requestAnimationFrame(looper)
+    !it.paused && (rafic = requestAnimationFrame(looper))
   }
 
   const player = () => {
@@ -416,8 +419,8 @@ const animate = ({
       onstart && onstart()
       starttime = performance.now()
     }
-    if (it.paused) {
-      it.paused = false
+    if (restarttime) {
+      restarttime = false
       starttime = performance.now() - it.time
     }
 
@@ -426,7 +429,7 @@ const animate = ({
     if (it.time === it.dur) it.ended = true
     tick()
 
-    if (!it.ended) {
+    if (!it.ended && !it.paused) {
       tmoid = setTimeout(ender, it.dur - it.time)
       rafic = requestAnimationFrame(player)
     }
