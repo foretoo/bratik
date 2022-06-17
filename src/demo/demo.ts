@@ -37,6 +37,7 @@ const bobik = Array((bobnum * 2) + 1).fill(null)
         if (i) setcontrols()
       },
     } as Bepoint
+    
     let angle: number
 
     const setpoint = () => {
@@ -117,7 +118,7 @@ const setbobicsolo = () => {
 
 
 font(20, "monospace")
-ax.yo(pivot, { x: width })
+ax.on(pivot, { x: width })
 
 
 
@@ -138,13 +139,9 @@ const play = () => {
   })
   shape()
 
-  stroke(null)
-  fill("black")
-  circle(boblen, boblen, 3)
-
   // CROSS LINES
-  if (pivot.y === 0) ay.yo(pivot, { y: height })
-  if (pivot.y === height) ay.yo(pivot, { y: 0 })
+  if (pivot.y === 0) ay.on(pivot, { y: height })
+  if (pivot.y === height) ay.on(pivot, { y: 0 })
   fill(null)
   stroke(grey, 1)
   line(pivot.x, 0, pivot.x, height)
@@ -178,8 +175,8 @@ loop(play)
 document.onkeydown = (e: KeyboardEvent) => {
   if (e.code === "Space") {
     if (looping) {
-      ax.paus()
-      ay.paus()
+      ax.pause()
+      ay.pause()
       stop()
     }
     else {
