@@ -190,21 +190,37 @@ const gradient = (
   const it = {} as Gradient
 
   if (type === LINEAR)
-    it.reset = () => {
-      const [ x1, y1, x2, y2 ] = options
-      it.image = ctx.createLinearGradient(x1 * pr, y1 * pr, x2 * pr, y2 * pr)
+    it.reset = (x1?: number, y1?: number, x2?: number, y2?: number) => {
+      const
+        _x1 = x1 || options[0],
+        _y1 = y1 || options[1],
+        _x2 = x2 || options[2],
+        _y2 = y2 || options[3]
+
+      it.image = ctx.createLinearGradient(_x1 * pr, _y1 * pr, _x2 * pr, _y2 * pr)
     }
 
   else if (type === CONIC)
-    it.reset = (angle?: number) => {
-      const a = angle || options[0], x = options[1], y = options[2]
-      it.image = ctx.createConicGradient(a * pr, x * pr, y * pr)
+    it.reset = (a?: number, x?: number, y?: number) => {
+      const
+        _a = a || options[0],
+        _x = x || options[1],
+        _y = y || options[2]
+
+      it.image = ctx.createConicGradient(_a * pr, _x * pr, _y * pr)
     }
 
   else if (type === RADIAL)
-    it.reset = () => {
-      const [ x1, y1, r1, x2, y2, r2 ] = options
-      it.image = ctx.createRadialGradient(x1 * pr, y1 * pr, r1 * pr, x2 * pr, y2 * pr, r2 * pr)
+    it.reset = (x1?: number, y1?: number, r1?: number, x2?: number, y2?: number, r2?: number) => {
+      const
+        _x1 = x1 || options[0],
+        _y1 = y1 || options[1],
+        _r1 = r1 || options[2],
+        _x2 = x2 || options[3],
+        _y2 = y2 || options[4],
+        _r2 = r2 || options[5]
+
+      it.image = ctx.createRadialGradient(_x1 * pr, _y1 * pr, _r1 * pr, _x2 * pr, _y2 * pr, _r2 * pr)
     }
 
   it.reset()
