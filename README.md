@@ -26,7 +26,7 @@ This will create the global variable `bratik`
 
 bratik exports:
 ```javascript
-{ getcanvas, pxratio, shape, vertex, arc, line, circle, rect, font, settext, text, fill, stroke, clear, frame, loop, stop, looping, animate, CLOSE, PI, TAU }
+{ getcanvas, pxratio, shape, vertex, arc, curve, line, circle, rect, font, settext, text, LINEAR, CONIC, RADIAL, gradient, fill, stroke, clear, bg, frame, loop, stop, looping, animate, CLOSE, PI, TAU }
 ```
 ### Canvas creation
 it takes two optional args: width, height
@@ -41,7 +41,7 @@ const {
   height  // height of window
 } = getcanvas()
 ```
-### Pixel ratio, fill, stroke
+### Pixel ratio, fill, stroke, clear, bg
 get/set, default: client device pixel ratio
 ```javascript
 // get
@@ -49,7 +49,49 @@ const pr = pxratio()
 // set
 pxratio(2)
 ```
-stroke takes color, width, lineCap, and lineLoin. fill takes color. you can provide null to stroke and fill, to delete them.
+provide null as a color to fill/stroke to remove it.
+```typescript
+stroke(
+  color: string | CanvasGradient | null,
+  width?: number,
+  lineCap?: string,
+  lineLoin?: string
+)
+
+fill(color: string | CanvasGradient | null)
+```  
+`clear()` cleans canvas, `bg(color)` fill canvas with provided color.
+### Gradient
+`gradient()` takes type of gradient `(LINEAR | CONIC | RADIAL)` tag as a first parameter, then other parameters need depending on type.
+```typescript
+const sunset = 
+  gradient(LINEAR, x1: number, y1: number, x2: number, y2: number) ||
+  gradient(CONIC, a: number, x: number, y: number) ||
+  gradient(RADIAL, x1: number, y1: number, r1: number, x2: number, y2: number, r2: number)
+```
+returns an object
+```typescript
+{
+  image: CanvasGradient,
+  // gradient itself which you can provide into fill,
+  // stroke or bg functions, like fill(sunset.image)
+  reset: (...options?: number[]) => void
+  // reset method to redefine gradient with options provided,
+  // as those passed in gradient function after the type tag
+  // or just reset it without options
+  add: (offset: number, color: string) => void
+  // after gradient initiation by type and options
+  // add colors by this method, offset should be from 0 to 1
+}
+```
+#### Example
+```typescript
+const sunrise = gradient(LINEAR, 0, 0, 0, height)
+sunrise.add(0, "deepskyblue")
+sunrise.add(0.75, "lightpink")
+sunrise.add(1, "lightgoldenrodyellow")
+bg(sunrise.image)
+```
 ### Looper
 loop takes a callback to run every animation frame. Call stop to stop the sloop.
 ```javascript
@@ -64,35 +106,68 @@ const play = () => {
 loop(play)
 ```
 ### Animate
-takes duration in ms, an ease tag (default: "cubicOut"), and a callback (which takes animation tick, from 0 to 1, as an argument) to run every animation frame, returns a function that takes optionally a target object with props to animate from and an object with props to animate to (gsap-like)
+animate function takes an object of options:
+```typescript
+{
+  dur: number, // in ms
+  ease: string, // ease tag (default: "linear"),
+  loop: boolean,
+  // and callbacks
+  onstart, ontick, onpause, onend
+}
+```
+returns a dinamicly mutable on every animation frame object:
+```typescript
+{
+  dur: number,
+  ease: string,
+  started: false,
+  paused: false,
+  ended: false,
+  frame: number, // frame number
+  time: number, // timestamp
+  t: number, // float number from 0 to 1 changing by ease function
+  // callbacks
+  onstart, ontick, onpause, onend
+  // methods
+  pause, play, on
+}
+```
+`.on(target, props)` takes a target object with props to animate from and an object with props to animate to (gsap-like)
+#### Example of how to handle entire animation with ontick callback only:
 ```javascript
 const
-  particle = { x: 10, y: height / 2 },
-  circMove = (t) => {
-    const R = (1 - t) * 255, G = 0, B = t * 255
-    fill(`rgb(${R},${G},${B})`)
-    particle.y = height / 2 + Math.sin(t * TAU) * (height / 2 - 10)
-    particle.x = width / 2 + Math.cos(t * TAU) * (width / 2 - 10)
-  },
-  move = animate(1000, "cubicInOut", circMove)
+  particle = { x: width / 2, y: height / 2 },
+  move = animate({
+    dur: 1000,
+    ease: "linear",
+    ontick: () => {
+      const {t} = move, R = (1 - t) * 255, G = 0, B = t * 255
+      fill(`rgb(${R},${G},${B})`)
+      particle.y = height / 2 + Math.sin(t * TAU) * (height / 2 - 10)
+      particle.x = width / 2 + Math.cos(t * TAU) * (width / 2 - 10)
+      circle(particle.x, particle.y, 10)
+    }
+  })
 
 stroke(null)
-loop(() => circle(particle.x, particle.y, 10))
-move()
+move.play()
 ```
-or just
+#### Example of animation with `.on()` method combined with `loop()`:
 ```javascript
 const
   particle = { x: 10, y: 10 },
-  move = animate(1000)
+  move = animate({ dur: 900 })
 
 stroke(null)
 fill("black")
-loop(() => circle(particle.x, particle.y, 10))
-move(particle, { x: width - 10, height - 10 })
+move.on(particle, { x: width - 10, y: height - 10 })
+loop(() => {
+  circle(particle.x, particle.y, 10)
+})
 ```
 ### Shape, circle, rect, line
-first call shape to initiate it, then you may call vertex() or arc(), once shape is finished call it again, provide CLOSE tag as a parameter to close it if needed.
+first call shape to initiate it, then you may call vertex(x, y), arc(x1, y1, x2, y2, r) or curve(x1, y1, x2, y2, x3?, y3?), once shape is finished call it again, provide CLOSE tag as a parameter to close it if needed.
 ```javascript
 const
   radius = 50,
@@ -109,6 +184,7 @@ for (let i = 0; i < sidesnum; i++) {
     ? vertex(vx(i), vy(i))
     : arc(vx(i), vy(i), vx(i + 1), vy(i + 1), radius)
 }
+curve(width / 2 + 50, height / 2 + 75, width / 2, height / 2 + 50)
 shape(CLOSE)
 ```
 cirlce takes x, y of center and radius. rect takes x, y, width, height and optionally radius if you want rounded corners. line takes x1, y1, x2, y2.
