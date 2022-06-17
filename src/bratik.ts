@@ -289,7 +289,7 @@ const animate = ({
 }: AnimateProps = defaults) => {
 
   let
-    target: Record<string | number | symbol, unknown> | undefined,
+    tar: Record<string | number | symbol, unknown> | undefined,
     keys: (string | number | symbol)[],
     froms: number[],
     tos: number[],
@@ -315,7 +315,7 @@ const animate = ({
     onend,
   }
 
-  const paus = () => {
+  const pause = () => {
     if (!rafic) return
     it.paused = true
     it.onpause && it.onpause()
@@ -324,20 +324,20 @@ const animate = ({
   }
 
   const play = () => {
-    if (!it.paused && !it.ended) return
+    if (it.started && !it.paused && !it.ended) return
     if (it.ended) reset()
     fire()
   }
 
-  const yo = (
-    _target: Record<string | number | symbol, unknown>,
+  const on = (
+    target: Record<string | number | symbol, unknown>,
     props: Record<string | number | symbol, number>
   ) => {
     if (it.started && !it.ended) return
 
-    target = _target
-    keys = Object.keys(props)
-    froms = keys.map((key) => target![key] as number)
+    tar = target || {}
+    keys = Object.keys(props || {})
+    froms = keys.map((key) => tar![key] as number)
     tos = keys.map((key, i) => props[key] - froms[i])
 
     reset()
@@ -360,7 +360,7 @@ const animate = ({
 
   const tick = () => {
     it.t = easing[ease](it.time / it.dur)
-    keys.forEach((key, i) => target![key] = froms[i] + it.t * tos[i])
+    keys.forEach((key, i) => tar![key] = froms[i] + it.t * tos[i])
     ontick && ontick()
     it.ended && onend && onend()
     it.frame++
@@ -416,7 +416,7 @@ const animate = ({
     }
   }
 
-  return Object.assign(it, { paus, play, yo })
+  return Object.assign(it, { pause, play, on })
 }
 
 
