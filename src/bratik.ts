@@ -61,8 +61,8 @@ const pxratio = (val?: number): number => {
 
 let shaping = false
 
-const shape = (arg?: string) => {
-  if (arg === "close") ctx.closePath()
+const ctxshape = (arg?: "CLOSE") => {
+  if (arg === "CLOSE") ctx.closePath()
 
   if (shaping) {
     shaping = false
@@ -71,7 +71,7 @@ const shape = (arg?: string) => {
   else ctx.beginPath()
 }
 
-const vertex = (
+const ctxvertex = (
   x: number, y: number
 ) => {
   if (shaping) ctx.lineTo(x * pr, y * pr)
@@ -80,14 +80,14 @@ const vertex = (
     ctx.moveTo(x * pr, y * pr)
   }
 }
-const arc = (
+const ctxarc = (
   x1: number, y1: number,
   x2: number, y2: number,
   r: number
 ) => {
   ctx.arcTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, r * pr)
 }
-const curve = (
+const ctxcurve = (
   x1: number, y1: number,
   x2: number, y2: number,
   x3?: number, y3?: number
@@ -97,26 +97,30 @@ const curve = (
 }
 
 const line = (
-  x1: number, y1: number,
-  x2: number, y2: number,
+  x1: number, y1: number, x2: number, y2: number,
 ) => {
   ctx.beginPath()
   ctx.moveTo(x1 * pr, y1 * pr)
   ctx.lineTo(x2 * pr, y2 * pr)
   draw()
 }
-const circle = (
-  x: number, y: number,
-  r = 10
+const ctxcircle = (
+  x: number, y: number, r = 10, from?: number, to?: number
 ) => {
   ctx.beginPath()
-  ctx.arc(x * pr, y * pr, r * pr, 0, TAU)
+  ctx.arc(x * pr, y * pr, r * pr, from || 0, to || TAU)
   draw()
 }
-const rect = (
-  x: number, y: number,
-  w = 20, h = 20,
-  r?: number,
+const ctxellipse = (
+  x: number, y: number, rx = 15, ry = 10, rotation = 0,
+  from?: number, to?: number, counterclockwise?: boolean
+) => {
+  ctx.beginPath()
+  ctx.ellipse(x * pr, y * pr, rx * pr, ry * pr, rotation * pr, from || 0, to || TAU, counterclockwise)
+  draw()
+}
+const ctxrect = (
+  x: number, y: number, w = 20, h = 20, r?: number,
 ) => {
   ctx.beginPath()
   if (r) {
@@ -128,6 +132,87 @@ const rect = (
   }
   else ctx.rect(x * pr, y * pr, w * pr, h * pr)
   draw()
+}
+
+
+let clippath: Path2D
+const mask = (tag?: "CLOSE") => {
+  if (tag === "CLOSE") {
+    ctx.clip(clippath)
+    shape = ctxshape,
+    vertex = ctxvertex,
+    arc = ctxarc,
+    curve = ctxcurve,
+    circle = ctxcircle,
+    ellipse = ctxellipse,
+    rect = ctxrect
+  }
+  else {
+    ctx.save()
+    clippath = new Path2D()
+    shape = maskshape,
+    vertex = maskvertex,
+    arc = maskarc,
+    curve = maskcurve,
+    circle = maskcircle,
+    ellipse = maskellipse,
+    rect = maskrect
+  }
+}
+const clip = () => ctx.restore()
+
+
+const maskshape = (
+  tag?: "CLOSE"
+) => {
+  if (shaping) shaping = false
+  if (tag === "CLOSE") {
+    shaping = false
+    clippath.closePath()
+  }
+}
+const maskvertex = (
+  x: number, y: number
+) => {
+  if (shaping) clippath.lineTo(x * pr, y * pr)
+  else {
+    shaping = true
+    clippath.moveTo(x * pr, y * pr)
+  }
+  }
+const maskarc = (
+  x1: number, y1: number, x2: number, y2: number, r: number
+) => {
+  clippath.arcTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, r * pr)
+}
+const maskcurve = (
+  x1: number, y1: number, x2: number, y2: number, x3?: number, y3?: number
+) => {
+  x3 && y3
+  ? clippath.bezierCurveTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, x3 * pr, y3 * pr)
+  : clippath.quadraticCurveTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr)
+}
+const maskcircle = (
+  x: number, y: number, r = 10, from?: number, to?: number
+) => {
+  clippath.arc(x * pr, y * pr, r * pr, from || 0, to || TAU)
+}
+const maskellipse = (
+  x: number, y: number, rx = 15, ry = 10, rotation = 0, from?: number, to?: number, counterclockwise?: boolean
+) => {
+  clippath.ellipse(x * pr, y * pr, rx * pr, ry * pr, rotation * pr, from || 0, to || TAU, counterclockwise)
+}
+const maskrect = (
+  x: number, y: number, w = 20, h = 20, r?: number,
+) => {
+  if (r) {
+    clippath.moveTo((x + r) * pr, y * pr)
+    clippath.arcTo((x + w) * pr, y * pr, (x + w) * pr, (y + h) * pr, r * pr)
+    clippath.arcTo((x + w) * pr, (y + h) * pr, x * pr, (y + h) * pr, r * pr)
+    clippath.arcTo(x * pr, (y + h) * pr, x * pr, y * pr, r * pr)
+    clippath.arcTo(x * pr, y * pr, (x + w) * pr, y * pr, r * pr)
+  }
+  else clippath.rect(x * pr, y * pr, w * pr, h * pr)
 }
 
 
@@ -438,6 +523,15 @@ const animate = ({
   return Object.assign(it, { pause, play, on })
 }
 
+let
+  shape = ctxshape,
+  vertex = ctxvertex,
+  arc = ctxarc,
+  curve = ctxcurve,
+  circle = ctxcircle,
+  ellipse = ctxellipse,
+  rect = ctxrect
+
 
 
 export {
@@ -451,7 +545,10 @@ export {
 
   line,
   circle,
+  ellipse,
   rect,
+  mask,
+  clip,
 
   font,
   settext,
