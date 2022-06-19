@@ -1,7 +1,6 @@
 const PI = Math.PI,
-      TAU = PI * 2
-
-const CLOSE = "close"
+      TAU = PI * 2,
+      CLOSE = "CLOSE"
 
 export {
   PI,
