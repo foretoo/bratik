@@ -23,6 +23,22 @@ type AnimateProps = {
 type AnimateCallBacks = "onstart" | "ontick" | "onpause" | "onend"
 type AnimateDefaults = Required<Omit<AnimateProps, AnimateCallBacks>>
 
+type AnimateData = Required<AnimateProps> & {
+  started: boolean
+  paused: boolean
+  ended: boolean
+  frame: number
+  time: number
+  t: number
+  
+  pause: () => void
+  play: () => void
+  on: (
+    target: Obj<unknown> | Obj<unknown>[],
+    props: Obj<number> | Obj<number>[]
+  ) => void
+}
+
 export {
   type Obj,
   
@@ -32,4 +48,5 @@ export {
   type Ease,
   type AnimateProps,
   type AnimateDefaults,
+  type AnimateData,
 }
