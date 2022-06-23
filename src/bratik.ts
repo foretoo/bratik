@@ -347,7 +347,7 @@ const clear = (
 ) => {
   ctx.clearRect(x * pr, y * pr, w * pr, h * pr)
 }
-const bg = (color: string | CanvasGradient) => {
+const bg = (color: string | CanvasGradient | CanvasPattern) => {
   const { fillStyle, strokeStyle } = ctx
   stroke(null)
   fill(color)
