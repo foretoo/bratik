@@ -1,5 +1,5 @@
 import { PI, TAU, CLOSE } from "./const"
-import { AnimateDefaults, AnimateProps, Ease, Gradient, GradientType, Obj } from "./types"
+import { AnimateData, AnimateDefaults, AnimateProps, Ease, Gradient, GradientType, Obj } from "./types"
 
 let width: number,
     height: number,
@@ -396,7 +396,7 @@ const animate = ({
 }: AnimateProps = defaults) => {
 
   let
-    calc: () => void,
+    calc: () => void = () => undefined,
     rafic: number | undefined,
     tmoid: number | undefined,
     starttime: number,
@@ -407,6 +407,7 @@ const animate = ({
   const it = {
     dur,
     ease,
+    loop,
     started: false,
     paused: false,
     ended: false,
@@ -418,9 +419,9 @@ const animate = ({
     ontick,
     onpause,
     onend,
-  }
+  } as AnimateData
 
-  const pause = () => {
+  it.pause = () => {
     if (!rafic) return
     it.paused = true
     it.onpause && it.onpause()
@@ -428,7 +429,7 @@ const animate = ({
     cancelAnimationFrame(rafic)
   }
 
-  const play = () => {
+  it.play = () => {
     if (it.started && !it.paused && !it.ended) return
     if (it.ended) reset()
     it.paused = false
@@ -436,10 +437,7 @@ const animate = ({
     fire()
   }
 
-  const on = (
-    target: Obj<unknown> | Obj<unknown>[],
-    props: Obj<number> | Obj<number>[]
-  ) => {
+  it.on = (target, props) => {
     if (it.started && !it.ended) return
 
     if (target instanceof Array) {
@@ -510,7 +508,7 @@ const animate = ({
     cancelAnimationFrame(rafic!)
   }
 
-  const looper = () => {
+  const starttick = () => {
     if (!it.started) {
       it.started = true
       onstart && onstart()
@@ -520,8 +518,11 @@ const animate = ({
       restarttime = false
       starttime = performance.now() - it.time
     }
-
     it.time = Math.min(performance.now() - starttime, it.dur)
+  }
+
+  const looper = () => {
+    starttick()
     if (it.time === it.dur) {
       it.time = 0
       starttime = performance.now()
@@ -531,29 +532,17 @@ const animate = ({
   }
 
   const player = () => {
-    
-    if (!it.started) {
-      it.started = true
-      onstart && onstart()
-      starttime = performance.now()
-    }
-    if (restarttime) {
-      restarttime = false
-      starttime = performance.now() - it.time
-    }
-
     clearTimeout(tmoid)
-    it.time = Math.min(performance.now() - starttime, it.dur)
+    starttick()
     if (it.time === it.dur) it.ended = true
     tick()
-
     if (!it.ended && !it.paused) {
       tmoid = setTimeout(ender, it.dur - it.time)
       rafic = requestAnimationFrame(player)
     }
   }
 
-  return Object.assign(it, { pause, play, on })
+  return it
 }
 
 let
