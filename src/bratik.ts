@@ -1,5 +1,5 @@
 import { PI, TAU, CLOSE } from "./const"
-import { AnimateDefaults, AnimateProps, Ease, Gradient, GradientType } from "./types"
+import { AnimateDefaults, AnimateProps, Ease, Gradient, GradientType, Obj } from "./types"
 
 let width: number,
     height: number,
@@ -390,10 +390,7 @@ const animate = ({
 }: AnimateProps = defaults) => {
 
   let
-    tar: Record<string | number | symbol, unknown> | undefined,
-    keys: (string | number | symbol)[] = [],
-    froms: number[] = [],
-    tos: number[] = [],
+    calc: () => void,
     rafic: number | undefined,
     tmoid: number | undefined,
     starttime: number,
@@ -434,15 +431,45 @@ const animate = ({
   }
 
   const on = (
-    target: Record<string | number | symbol, unknown>,
-    props: Record<string | number | symbol, number>
+    target: Obj<unknown> | Obj<unknown>[],
+    props: Obj<number> | Obj<number>[]
   ) => {
     if (it.started && !it.ended) return
 
-    tar = target
-    keys = Object.keys(props)
-    froms = keys.map((key) => tar![key] as number)
-    tos = keys.map((key, i) => props[key] - froms[i])
+    if (target instanceof Array) {
+      if (props instanceof Array) {
+        const
+          keys = props.map((prop) => Object.keys(prop)),
+          froms = target.map((obj, i) => keys[i].map((key) => obj[key] as number)),
+          diffs = props.map((prop, i) => keys[i].map((key, j) => prop[key] - froms[i][j]))
+
+        calc = () => target.forEach((tar, i) =>
+          keys[i].forEach((key, j) => {
+            tar[key] = froms[i][j] + it.t * diffs[i][j]
+          }))
+      }
+      else {
+        const
+          keys = Object.keys(props),
+          froms = target.map((obj) => keys.map((key) => obj[key] as number)),
+          diffs = froms.map((from) => keys.map((key, i) => props[key] - from[i]))
+
+        calc = () => target.forEach((tar, i) =>
+          keys.forEach((key, j) => {
+            tar[key] = froms[i][j] + it.t * diffs[i][j]
+          }))
+      }
+    }
+    else {
+      const
+        keys = Object.keys(props),
+        froms = keys.map((key) => target[key] as number),
+        diffs = keys.map((key, i) => (props as Obj<number>)[key] - froms[i])
+
+      calc = () => keys.forEach((key, i) => {
+          target[key] = froms[i] + it.t * diffs[i]
+        })
+    }
 
     reset()
     fire()
@@ -464,7 +491,7 @@ const animate = ({
 
   const tick = () => {
     it.t = easing[ease](it.time / it.dur)
-    keys.forEach((key, i) => tar![key] = froms[i] + it.t * tos[i])
+    calc()
     ontick && ontick()
     it.ended && onend && onend()
     it.frame++
