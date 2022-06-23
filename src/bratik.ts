@@ -321,12 +321,14 @@ const draw = () => {
   ctx.fill()
   ctx.stroke()
 }
-const fill = (color: string | CanvasGradient | null) => {
+const fill = (
+  color: string | CanvasGradient | CanvasPattern | null
+) => {
   if (color === null) ctx.fillStyle = "transparent"
   else ctx.fillStyle = color
 }
 const stroke = (
-  color: string | CanvasGradient | null,
+  color: string | CanvasGradient | CanvasPattern | null,
   width?: number,
   cap?: CanvasLineCap,
   join?: CanvasLineJoin,
@@ -346,8 +348,12 @@ const clear = (
   ctx.clearRect(x * pr, y * pr, w * pr, h * pr)
 }
 const bg = (color: string | CanvasGradient) => {
+  const { fillStyle, strokeStyle } = ctx
+  stroke(null)
   fill(color)
   rect(0, 0, width, height)
+  stroke(strokeStyle)
+  fill(fillStyle)
 }
 
 
