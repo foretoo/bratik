@@ -1,3 +1,5 @@
+type Obj<T> = Record<string | number | symbol, T>
+
 type GradientType = "LINEAR" | "CONIC" | "RADIAL"
 
 type Gradient = {
@@ -22,6 +24,8 @@ type AnimateCallBacks = "onstart" | "ontick" | "onpause" | "onend"
 type AnimateDefaults = Required<Omit<AnimateProps, AnimateCallBacks>>
 
 export {
+  type Obj,
+  
   type GradientType,
   type Gradient,
   
