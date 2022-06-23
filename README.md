@@ -133,7 +133,6 @@ returns a dinamicly mutable on every animation frame object:
   pause, play, on
 }
 ```
-`.on(target, props)` takes a target object with props to animate from and an object with props to animate to (gsap-like)
 #### Example of how to handle entire animation with ontick callback only:
 ```javascript
 const
@@ -154,6 +153,7 @@ stroke(null)
 move.play()
 ```
 #### Example of animation with `.on()` method combined with `loop()`:
+`.on(target, props)` takes a target object (or array of objects) with props to animate "from" and an object (or array of objects) with props to animate "to" (gsap-like)
 ```javascript
 const
   particle = { x: 10, y: 10 },
