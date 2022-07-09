@@ -1,5 +1,5 @@
 import "./style.sass"
-import { getcanvas, clear, fill, stroke, loop, stop, line, animate, circle, rect, font, settext, text, gradient, LINEAR, bg, RADIAL, CONIC, PI, frame, looping, TAU, shape, vertex, CLOSE, curve, pxratio, mask, clip } from "../bratik"
+import { getcanvas, clear, fill, stroke, loop, stop, line, circle, rect, font, settext, text, gradient, LINEAR, bg, RADIAL, CONIC, PI, frame, looping, TAU, shape, vertex, CLOSE, curve, pxratio, mask, clip } from "../bratik"
 import { bobik } from "./bobik"
 
 const
