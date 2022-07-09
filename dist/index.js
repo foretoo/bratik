@@ -28,7 +28,8 @@ const getcanvas = (w, h, id) => {
   return { width, height, ctx, canvas }
 }
 const pxratio = (val) => {
-  if (val === void 0) return window.devicePixelRatio
+  if (val === void 0)
+    return window.devicePixelRatio
   else {
     pr = val
     canvas.width = width * pr
@@ -38,15 +39,18 @@ const pxratio = (val) => {
 }
 let shaping = false
 const ctxshape = (arg) => {
-  if (arg === "CLOSE") ctx.closePath()
+  if (arg === "CLOSE")
+    ctx.closePath()
   if (shaping) {
     shaping = false
     draw()
   }
-  else ctx.beginPath()
+  else
+    ctx.beginPath()
 }
 const ctxvertex = (x, y) => {
-  if (shaping) ctx.lineTo(x * pr, y * pr)
+  if (shaping)
+    ctx.lineTo(x * pr, y * pr)
   else {
     shaping = true
     ctx.moveTo(x * pr, y * pr)
@@ -56,7 +60,10 @@ const ctxarc = (x1, y1, x2, y2, r) => {
   ctx.arcTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, r * pr)
 }
 const ctxcurve = (x1, y1, x2, y2, x3, y3) => {
-  x3 && y3 ? ctx.bezierCurveTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, x3 * pr, y3 * pr) : ctx.quadraticCurveTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr)
+  if (x3 && y3)
+    ctx.bezierCurveTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr, x3 * pr, y3 * pr)
+  else
+    ctx.quadraticCurveTo(x1 * pr, y1 * pr, x2 * pr, y2 * pr)
 }
 const line = (x1, y1, x2, y2) => {
   ctx.beginPath()
@@ -71,7 +78,7 @@ const ctxcircle = (x, y, r = 10, from, to) => {
 }
 const ctxellipse = (x, y, rx = 15, ry = 10, rotation = 0, from, to, counterclockwise) => {
   ctx.beginPath()
-  ctx.ellipse(x * pr, y * pr, rx * pr, ry * pr, rotation * pr, from || 0, to || TAU, counterclockwise)
+  ctx.ellipse(x * pr, y * pr, rx * pr, ry * pr, rotation, from || 0, to || TAU, counterclockwise)
   draw()
 }
 const ctxrect = (x, y, w = 20, h = 20, r) => {
@@ -83,7 +90,8 @@ const ctxrect = (x, y, w = 20, h = 20, r) => {
     ctx.arcTo(x * pr, (y + h) * pr, x * pr, y * pr, r * pr)
     ctx.arcTo(x * pr, y * pr, (x + w) * pr, y * pr, r * pr)
   }
-  else ctx.rect(x * pr, y * pr, w * pr, h * pr)
+  else
+    ctx.rect(x * pr, y * pr, w * pr, h * pr)
   draw()
 }
 let clippath
@@ -100,14 +108,16 @@ const mask = (tag) => {
 }
 const clip = () => ctx.restore()
 const maskshape = (tag) => {
-  if (shaping) shaping = false
+  if (shaping)
+    shaping = false
   if (tag === "CLOSE") {
     shaping = false
     clippath.closePath()
   }
 }
 const maskvertex = (x, y) => {
-  if (shaping) clippath.lineTo(x * pr, y * pr)
+  if (shaping)
+    clippath.lineTo(x * pr, y * pr)
   else {
     shaping = true
     clippath.moveTo(x * pr, y * pr)
@@ -133,13 +143,16 @@ const maskrect = (x, y, w = 20, h = 20, r) => {
     clippath.arcTo(x * pr, (y + h) * pr, x * pr, y * pr, r * pr)
     clippath.arcTo(x * pr, y * pr, (x + w) * pr, y * pr, r * pr)
   }
-  else clippath.rect(x * pr, y * pr, w * pr, h * pr)
+  else
+    clippath.rect(x * pr, y * pr, w * pr, h * pr)
 }
 let font_family = "sans-serif"
 const font = (size, family, options) => {
   let fontsize = "", fontoptions = options ? options : "", fontfamily = font_family
-  if (family) font_family = fontfamily = family
-  if (typeof size === "number") fontsize = size * pr + "px"
+  if (family)
+    font_family = fontfamily = family
+  if (typeof size === "number")
+    fontsize = size * pr + "px"
   if (typeof size === "string") {
     const temp = size.match(/^(\d+)([a-z%]*)\/?(\d*)([a-z%]*)$/)
     if (temp) {
@@ -191,13 +204,22 @@ const draw = () => {
   ctx.stroke()
 }
 const fill = (color) => {
-  color === null ? ctx.fillStyle = "transparent" : ctx.fillStyle = color
+  if (color === null)
+    ctx.fillStyle = "transparent"
+  else
+    ctx.fillStyle = color
 }
 const stroke = (color, width2, cap, join) => {
-  color === null ? ctx.strokeStyle = "transparent" : ctx.strokeStyle = color
-  if (width2 !== void 0) ctx.lineWidth = width2 * pr
-  if (cap !== void 0) ctx.lineCap = cap
-  if (join !== void 0) ctx.lineJoin = join
+  if (color === null)
+    ctx.strokeStyle = "transparent"
+  else
+    ctx.strokeStyle = color
+  if (width2 !== void 0)
+    ctx.lineWidth = width2 * pr
+  if (cap !== void 0)
+    ctx.lineCap = cap
+  if (join !== void 0)
+    ctx.lineJoin = join
 }
 const clear = (x = 0, y = 0, w = width, h = height) => {
   ctx.clearRect(x * pr, y * pr, w * pr, h * pr)
@@ -220,141 +242,11 @@ const loop = (drawingCallBack) => {
   const play = (time) => {
     frame++
     drawingCallBack(time)
-    if (looping) rafid = requestAnimationFrame(play)
+    if (looping)
+      rafid = requestAnimationFrame(play)
   }
   rafid = requestAnimationFrame(play)
 }
-const easing = {
-  linear: (t) => t,
-  cubicIn: (t) => t * t * t,
-  cubicOut: (t) => 1 - (1 - t) * (1 - t) * (1 - t),
-  cubicInOut: (t) => t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) * (-2 * t + 2) * (-2 * t + 2) / 2,
-}
-const defaults = {
-  dur: 1e3,
-  loop: false,
-  ease: "linear",
-}
-const animate = ({
-  dur = 1e3,
-  loop: loop2 = false,
-  ease = "linear",
-  onstart,
-  ontick,
-  onpause,
-  onend,
-} = defaults) => {
-  let calc = () => void 0, rafic, tmoid, starttime, restarttime = false
-  const it = {
-    dur,
-    ease,
-    loop: loop2,
-    started: false,
-    paused: false,
-    ended: false,
-    frame: 0,
-    time: 0,
-    t: 0,
-    onstart,
-    ontick,
-    onpause,
-    onend,
-  }
-  it.pause = () => {
-    if (!rafic) return
-    it.paused = true
-    it.onpause && it.onpause()
-    clearTimeout(tmoid)
-    cancelAnimationFrame(rafic)
-  }
-  it.play = () => {
-    if (it.started && !it.paused && !it.ended) return
-    if (it.ended) reset()
-    it.paused = false
-    restarttime = true
-    fire()
-  }
-  it.on = (target, props) => {
-    if (it.started && !it.ended) return
-    if (target instanceof Array) {
-      if (props instanceof Array) {
-        const keys = props.map((prop) => Object.keys(prop)), froms = target.map((obj, i) => keys[i].map((key) => obj[key])), diffs = props.map((prop, i) => keys[i].map((key, j) => prop[key] - froms[i][j]))
-        calc = () => target.forEach((tar, i) => keys[i].forEach((key, j) => {
-          tar[key] = froms[i][j] + it.t * diffs[i][j]
-        }))
-      }
-      else {
-        const keys = Object.keys(props), froms = target.map((obj) => keys.map((key) => obj[key])), diffs = froms.map((from) => keys.map((key, i) => props[key] - from[i]))
-        calc = () => target.forEach((tar, i) => keys.forEach((key, j) => {
-          tar[key] = froms[i][j] + it.t * diffs[i][j]
-        }))
-      }
-    }
-    else {
-      const keys = Object.keys(props), froms = keys.map((key) => target[key]), diffs = keys.map((key, i) => props[key] - froms[i])
-      calc = () => keys.forEach((key, i) => {
-        target[key] = froms[i] + it.t * diffs[i]
-      })
-    }
-    reset()
-    fire()
-  }
-  const fire = () => {
-    rafic = loop2 ? requestAnimationFrame(looper) : requestAnimationFrame(player)
-  }
-  const reset = () => {
-    it.frame = 0
-    it.time = 0
-    it.t = 0
-    it.started = false
-    it.ended = false
-  }
-  const tick = () => {
-    it.t = easing[ease](it.time / it.dur)
-    calc()
-    ontick && ontick()
-    it.ended && onend && onend()
-    it.frame++
-  }
-  const ender = () => {
-    it.time = it.dur
-    it.ended = true
-    tick()
-    cancelAnimationFrame(rafic)
-  }
-  const starttick = () => {
-    if (!it.started) {
-      it.started = true
-      onstart && onstart()
-      starttime = performance.now()
-    }
-    if (restarttime) {
-      restarttime = false
-      starttime = performance.now() - it.time
-    }
-    it.time = Math.min(performance.now() - starttime, it.dur)
-  }
-  const looper = () => {
-    starttick()
-    if (it.time === it.dur) {
-      it.time = 0
-      starttime = performance.now()
-    }
-    tick()
-    if (!it.paused) rafic = requestAnimationFrame(looper)
-  }
-  const player = () => {
-    clearTimeout(tmoid)
-    starttick()
-    if (it.time === it.dur) it.ended = true
-    tick()
-    if (!it.ended && !it.paused) {
-      tmoid = setTimeout(ender, it.dur - it.time)
-      rafic = requestAnimationFrame(player)
-    }
-  }
-  return it
-}
 let shape = ctxshape, vertex = ctxvertex, arc = ctxarc, curve = ctxcurve, circle = ctxcircle, ellipse = ctxellipse, rect = ctxrect
 
-export { CLOSE, CONIC, LINEAR, PI, RADIAL, TAU, animate, arc, bg, circle, clear, clip, curve, ellipse, fill, font, frame, getcanvas, gradient, line, loop, looping, mask, pxratio, rect, settext, shape, stop, stroke, text, vertex }
+export { CLOSE, CONIC, LINEAR, PI, RADIAL, TAU, arc, bg, circle, clear, clip, curve, ellipse, fill, font, frame, getcanvas, gradient, line, loop, looping, mask, pxratio, rect, settext, shape, stop, stroke, text, vertex }
