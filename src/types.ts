@@ -4,7 +4,7 @@ type GradientType = "LINEAR" | "CONIC" | "RADIAL"
 
 type Gradient = {
   image: CanvasGradient,
-  reset: (a?: number) => void,
+  reset: (...options: number[]) => void,
   add: (offset: number, color: string) => void,
 }
 
