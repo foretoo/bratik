@@ -41,7 +41,7 @@ Array((num * 2) + 1).fill(null)
     }
 
     if (i !== num * 2) {
-      angle = Math.random() * (PI / num) + i * (PI / num)
+      angle = (Math.random() + i) * (PI / num)
       point.len = len / 2 + len * Math.random() / 2
       point.len = i % 2 === 0 ? point.len : Math.max(point.len / 2.71, len / 4 + 2)
       setpoint()
