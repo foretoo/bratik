@@ -11,7 +11,7 @@ const defaults: AnimateDefaults = {
   dur: 1000, loop: false, ease: "linear"
 }
 
-export const animate = ({
+const animate = ({
   dur = 1000,
   loop = false,
   ease = "linear",
@@ -19,7 +19,7 @@ export const animate = ({
   ontick,
   onpause,
   onend
-}: AnimateProps = defaults) => {
+}: AnimateProps = defaults): AnimateData => {
 
   let
     calc: () => void = () => undefined,
@@ -169,4 +169,8 @@ export const animate = ({
   }
 
   return it
+}
+
+export {
+  animate,
 }

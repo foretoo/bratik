@@ -1,4 +1,5 @@
 import { PI, TAU, CLOSE } from "./const"
+import { animate } from "./animate"
 import { Gradient, GradientType } from "./types"
 
 let width: number,
@@ -421,6 +422,7 @@ export {
   loop,
   stop,
   looping,
+  animate,
 
   CLOSE,
   PI,
