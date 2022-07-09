@@ -202,7 +202,7 @@ loop(() => {
 
 ## Shape, circle, ellipse, rect, line
 
-first call shape to initiate it, then you may call vertex(x, y), arc(x1, y1, x2, y2, r) or curve(x1, y1, x2, y2, x3?, y3?), once shape is finished call it again, provide CLOSE tag as a parameter to close it if needed.
+first call shape to initiate it, then you may call `vertex(x, y)`, `arc(x1, y1, x2, y2, r)` or `curve(x1, y1, x2, y2, x3?, y3?)`, once shape is finished call it again, provide `CLOSE` tag as a parameter to close it if needed.
 ```javascript
 const
   radius = 50,
