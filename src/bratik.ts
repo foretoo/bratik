@@ -116,7 +116,7 @@ const ctxellipse = (
   from?: number, to?: number, counterclockwise?: boolean
 ) => {
   ctx.beginPath()
-  ctx.ellipse(x * pr, y * pr, rx * pr, ry * pr, rotation * pr, from || 0, to || TAU, counterclockwise)
+  ctx.ellipse(x * pr, y * pr, rx * pr, ry * pr, rotation, from || 0, to || TAU, counterclockwise)
   draw()
 }
 const ctxrect = (
