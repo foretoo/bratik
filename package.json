@@ -1,6 +1,6 @@
 {
   "name": "bratik",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "description": "Tiny, p5.js-like, typed toolkit to cakewalk through a 2D rendering context of Canvas API",
   "keywords": [ "canvas", "2d", "toolkit", "draw", "geometry", "animate", "loop" ],
   "author": "Sergey Borovikov",
