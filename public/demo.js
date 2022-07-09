@@ -1,5 +1,5 @@
 import { getcanvas, circle, shape, vertex, CLOSE, clear, fill, stroke, gradient, arc } from "../lib/bratik.es.js"
-import round_shape from "https://unpkg.com/round-polygon@latest/lib/round-polygon.es.js"
+import round_shape from "https://unpkg.com/round-polygon@latest/dist/round-polygon.es.js"
 const { canvas, width } = getcanvas(), points = [], grey = "#0007", bluish = "#00f7", solo = gradient("LINEAR", 0, 0, width, 0)
 const solocolors = Array(width/20).fill(null).map(() => {
   const v = Math.random()*255|0
