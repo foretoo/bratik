@@ -12,25 +12,24 @@ npm i bratik
 ```
 and then
 ```javascript
-import { getcanvas } from "bratik"
+import { getcanvas, ... } from "bratik"
 ```
 or if you don't use npm you can import module from unpkg:
 ```javascript
-import { getcanvas } from "https://unpkg.com/bratik@latest/lib/bratik.es.js"
+import { getcanvas, ... } from "https://unpkg.com/bratik@latest/dist/index.js"
 ```
-or by script tag in your html page:
+or by script tag in your html page (this will create the global variable `bratik`):
 ```html
-<script src="https://unpkg.com/bratik@latest/lib/bratik.iife.js"></script>
+<script src="https://unpkg.com/bratik@latest/dist/iife/bratik.js"></script>
 ```
-This will create the global variable `bratik`
 
 <br/>
 
 ## Usage
 
-bratik exports:
+`bratik` exports:
 ```javascript
-{ getcanvas, pxratio, shape, vertex, arc, curve, line, circle, ellipse, rect, mask, clip, font, settext, text, LINEAR, CONIC, RADIAL, gradient, fill, stroke, clear, bg, frame, loop, stop, looping, animate, CLOSE, PI, TAU }
+{ getcanvas, pxratio, shape, vertex, arc, curve, line, circle, ellipse, rect, mask, clip, font, settext, text, LINEAR, CONIC, RADIAL, gradient, fill, stroke, clear, bg, frame, loop, stop, looping, CLOSE, PI, TAU }
 ```
 <br/>
 
@@ -123,6 +122,19 @@ loop(play)
 <br/>
 
 ### Animate
+`animate` function comes separately
+```javascript
+import { animate } from "bratik/animate"
+```
+from unpkg:
+```javascript
+import { animate } from "https://unpkg.com/bratik@latest/dist/animate/index.js"
+```
+iife module in your html file (this will create the global variable `animate`):
+```html
+<script src="https://unpkg.com/bratik@latest/dist/iife/animate.js"></script>
+```
+
 animate function takes an object of options:
 ```typescript
 {
@@ -259,6 +271,8 @@ for (let i = 0; i < 4; i++) {
   clip()
 }
 ```
+you will get something like this:
+
 <img src="./public/readme/mask.png" alt="drawing" width="200"/><br/><br/>
 
 ### Text
