@@ -2,12 +2,36 @@ declare const PI: number;
 declare const TAU: number;
 declare const CLOSE = "CLOSE";
 
+declare type Obj<T> = Record<string | number | symbol, T>;
 declare type GradientType = "LINEAR" | "CONIC" | "RADIAL";
 declare type Gradient = {
     image: CanvasGradient;
     reset: (...options: number[]) => void;
     add: (offset: number, color: string) => void;
 };
+declare type Ease = "linear" | "cubicIn" | "cubicOut" | "cubicInOut";
+declare type AnimateProps = {
+    dur?: number;
+    loop?: boolean;
+    ease?: Ease;
+    onstart?: () => void;
+    ontick?: () => void;
+    onpause?: () => void;
+    onend?: () => void;
+};
+declare type AnimateData = Required<AnimateProps> & {
+    started: boolean;
+    paused: boolean;
+    ended: boolean;
+    frame: number;
+    time: number;
+    t: number;
+    pause: () => void;
+    play: () => void;
+    on: (target: Obj<unknown> | Obj<unknown>[], props: Obj<number> | Obj<number>[]) => void;
+};
+
+declare const animate: ({ dur, loop, ease, onstart, ontick, onpause, onend }?: AnimateProps) => AnimateData;
 
 declare let frame: number;
 declare let looping: boolean;
@@ -42,4 +66,4 @@ declare let circle: (x: number, y: number, r?: number, from?: number, to?: numbe
 declare let ellipse: (x: number, y: number, rx?: number, ry?: number, rotation?: number, from?: number, to?: number, counterclockwise?: boolean) => void;
 declare let rect: (x: number, y: number, w?: number, h?: number, r?: number) => void;
 
-export { CLOSE, CONIC, LINEAR, PI, RADIAL, TAU, arc, bg, circle, clear, clip, curve, ellipse, fill, font, frame, getcanvas, gradient, line, loop, looping, mask, pxratio, rect, settext, shape, stop, stroke, text, vertex };
+export { CLOSE, CONIC, LINEAR, PI, RADIAL, TAU, animate, arc, bg, circle, clear, clip, curve, ellipse, fill, font, frame, getcanvas, gradient, line, loop, looping, mask, pxratio, rect, settext, shape, stop, stroke, text, vertex };
