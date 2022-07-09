@@ -13,7 +13,7 @@ export default defineConfig({
     file: "public/demo.js",
     format: "es",
     paths: (id) =>
-        id.includes("src/bratik.ts") ? "../dist/bratik.es.js" : "",
+      id.includes("src/bratik.ts") ? "../dist/bratik.min.js" : "",
   },
   plugins: [
     nodeResolve({ jail: "src" }),
