@@ -1,8 +1,9 @@
-- ~~add curves~~
-- ~~add gradients~~
-- ~~make animate loopable~~
-- ~~add pause/play, as well as onstart, ontick, onpause, onend methods to animate()~~
-- ~~documentation~~
-- ~~add simple animating tool~~
-- ~~provide devicePixelRatio to every number value~~
-- ~~font() should remember font-family~~
+- number of 0...255 as color param
+- createGraphics
+- image
+- pixels
+- saveCamvas
+- redraw
+- pointer events
+- filters (blur)
+...
