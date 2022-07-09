@@ -4,7 +4,7 @@ see [Demo page](https://foretoo.github.io/bratik).
 
 <br/>
 
-## Installation
+# Installation
 
 by npm:
 ```
@@ -25,15 +25,28 @@ or by script tag in your html page (this will create the global variable `bratik
 
 <br/>
 
-## Usage
+# Usage
 
 `bratik` exports:
 ```javascript
-{ getcanvas, pxratio, shape, vertex, arc, curve, line, circle, ellipse, rect, mask, clip, font, settext, text, LINEAR, CONIC, RADIAL, gradient, fill, stroke, clear, bg, frame, loop, stop, looping, CLOSE, PI, TAU }
+import
+{
+  getcanvas, pxratio,
+  shape, vertex, arc, curve,
+  line, circle, ellipse, rect,
+  mask, clip,
+  font, settext, text,
+  LINEAR, CONIC, RADIAL, gradient,
+  fill, stroke, clear, bg,
+  frame, loop, stop, looping,
+  CLOSE, PI, TAU
+}
+from "bratik"
 ```
 <br/>
 
-### Canvas creation
+## Canvas creation
+
 it takes two optional args: width, height
 ```javascript
 getcanvas(100, 100)
@@ -48,7 +61,7 @@ const {
 ```
 <br/>
 
-### Pixel ratio, fill, stroke, clear, bg
+## Pixel ratio, fill, stroke, clear, bg
 
 get/set, default: client device pixel ratio
 ```javascript
@@ -72,14 +85,15 @@ fill(color: string | CanvasGradient | null)
 
 <br/>
 
-### Gradient
+## Gradient
 
 `gradient()` takes type of gradient `(LINEAR | CONIC | RADIAL)` tag as a first parameter, then other parameters need depending on type.
+For the radial gradient you can pass only 3 parameters (x, y, r), 4 parameters (x, y, r1, r2) or 6 like shown below.
 ```typescript
 const sunset = 
   gradient(LINEAR, x1: number, y1: number, x2: number, y2: number) ||
   gradient(CONIC, a: number, x: number, y: number) ||
-  gradient(RADIAL, x1: number, y1: number, r1: number, x2: number, y2: number, r2: number)
+  gradient(RADIAL, x1: number, y1: number, r1: number, x2?: number, y2?: number, r2?: number)
 ```
 returns an object
 ```typescript
@@ -96,7 +110,7 @@ returns an object
   // add colors by this method, offset should be from 0 to 1
 }
 ```
-#### Example
+Example
 ```typescript
 const sunrise = gradient(LINEAR, 0, 0, 0, height)
 sunrise.add(0, "deepskyblue")
@@ -106,8 +120,9 @@ bg(sunrise.image)
 ```
 <br/>
 
-### Looper
-loop takes a callback to run every animation frame. Call stop to stop the sloop.
+## Looper
+
+loop takes a callback to run every animation frame. Call stop to stop the loop.
 ```javascript
 let x = 20
 const play = () => {
@@ -118,10 +133,11 @@ const play = () => {
   if (frame === 180) stop()
 }
 loop(play)
+stop()
 ```
 <br/>
 
-### Animate
+## Animate
 
 animate function takes an object of options:
 ```typescript
@@ -150,13 +166,11 @@ returns a dinamicly mutable on every animation frame object:
   pause, play, on
 }
 ```
-#### Example of how to handle entire animation with ontick callback only:
+Example of how to handle entire animation with ontick callback only:
 ```javascript
 const particle = { x: width / 2, y: height / 2 }
 stroke(null)
 animate({
-  dur: 1000,
-  ease: "linear",
   ontick: () => {
     const {t} = move, R = (1 - t) * 255, G = 0, B = t * 255
     fill(`rgb(${R},${G},${B})`)
@@ -166,7 +180,7 @@ animate({
   }
 }).play()
 ```
-#### Example of animation with `.on()` method combined with `loop()`:
+Example of animation with `.on()` method combined with `loop()`:
 `.on(target, props)` takes a target object (or array of objects) with props to animate "from" and an object (or array of objects) with props to animate "to" (gsap-like)
 ```javascript
 const
@@ -178,11 +192,16 @@ fill("black")
 move.on(particle, { x: width - 10, y: height - 10 })
 loop(() => {
   circle(particle.x, particle.y, 10)
+  if (
+    particle.x === width  - 10 &&
+    particle.y === height - 10
+  ) stop()
 })
 ```
 <br/>
 
-### Shape, circle, ellipse, rect, line
+## Shape, circle, ellipse, rect, line
+
 first call shape to initiate it, then you may call vertex(x, y), arc(x1, y1, x2, y2, r) or curve(x1, y1, x2, y2, x3?, y3?), once shape is finished call it again, provide CLOSE tag as a parameter to close it if needed.
 ```javascript
 const
@@ -228,36 +247,33 @@ loop(() => {
 ```
 <br/>
 
-### Mask
+## Mask
+
 You need to define mask shape in between `mask()` and `mask(CLOSE)` calls, it could be any number of — shape (and vertex, arc, curve), circle, ellipse or rect — calls. Then draw anything you like to clip by mask, after you done just call clip()
 ```javascript
-const size = 100
-const hex = [ "FF", "00" ]
+const hex = [ "FF", "00" ], { round, random } = Math
+getcanvas(200)
+const sun = gradient(RADIAL, 100, 100, 100 * Math.SQRT2)
+const getcolor = () => Array(4).fill(0).map((_,i)=>i?hex[round(random())]:"#").join("")
 
-getcanvas(size * 2)
+// define mask
+mask()
+rect(50, 0, 100, 200, 40)
+rect(0, 50, 200, 100, 40)
+mask(CLOSE)
 
-const sun = gradient(RADIAL, size, size, 0, size, size, size * Math.SQRT2)
-const getcolor = () => "#".concat(Array(3).fill("")
-  .map(() => hex[Math.round(Math.random())]).join(""))
-
+// drawing
+stroke(null)
 for (let i = 0; i < 4; i++) {
-  const x = i % 2 ? size : 0
-  const y = i > 1 ? size : 0
-
-  // define mask
-  mask()
-  rect(x, y, size, size)
-  mask(CLOSE)
-
-  // drawing
+  const x = i % 2 ? 100 : 0, y = i > 1 ? 100 : 0
   sun.reset()
   sun.add(0, getcolor())
   sun.add(1, getcolor())
-  bg(sun.image)
-
-  // clipping
-  clip()
+  fill(sun.image)
+  rect(x, y, 100, 100, 10)
 }
+// clipping
+clip()
 ```
 you will get something like this:
 
