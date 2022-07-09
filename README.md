@@ -2,6 +2,8 @@
 Tiny, p5.js-like, typed toolkit to cakewalk through 2d canvas context.  
 see [Demo page](https://foretoo.github.io/bratik).
 
+<br/>
+
 ## Installation
 
 by npm:
@@ -22,12 +24,16 @@ or by script tag in your html page:
 ```
 This will create the global variable `bratik`
 
+<br/>
+
 ## Usage
 
 bratik exports:
 ```javascript
-{ getcanvas, pxratio, shape, vertex, arc, curve, line, circle, rect, font, settext, text, LINEAR, CONIC, RADIAL, gradient, fill, stroke, clear, bg, frame, loop, stop, looping, animate, CLOSE, PI, TAU }
+{ getcanvas, pxratio, shape, vertex, arc, curve, line, circle, ellipse, rect, mask, clip, font, settext, text, LINEAR, CONIC, RADIAL, gradient, fill, stroke, clear, bg, frame, loop, stop, looping, animate, CLOSE, PI, TAU }
 ```
+<br/>
+
 ### Canvas creation
 it takes two optional args: width, height
 ```javascript
@@ -41,7 +47,10 @@ const {
   height  // height of window
 } = getcanvas()
 ```
+<br/>
+
 ### Pixel ratio, fill, stroke, clear, bg
+
 get/set, default: client device pixel ratio
 ```javascript
 // get
@@ -61,7 +70,11 @@ stroke(
 fill(color: string | CanvasGradient | null)
 ```  
 `clear()` cleans canvas, `bg(color)` fill canvas with provided color.
+
+<br/>
+
 ### Gradient
+
 `gradient()` takes type of gradient `(LINEAR | CONIC | RADIAL)` tag as a first parameter, then other parameters need depending on type.
 ```typescript
 const sunset = 
@@ -92,6 +105,8 @@ sunrise.add(0.75, "lightpink")
 sunrise.add(1, "lightgoldenrodyellow")
 bg(sunrise.image)
 ```
+<br/>
+
 ### Looper
 loop takes a callback to run every animation frame. Call stop to stop the sloop.
 ```javascript
@@ -105,14 +120,16 @@ const play = () => {
 }
 loop(play)
 ```
+<br/>
+
 ### Animate
 animate function takes an object of options:
 ```typescript
 {
-  dur: number, // in ms
+  dur: number, // in ms (default: 1000)
   ease: string, // ease tag (default: "linear"),
-  loop: boolean,
-  // and callbacks
+  loop: boolean, // default: false
+  // and callbacks:
   onstart, ontick, onpause, onend
 }
 ```
@@ -135,22 +152,19 @@ returns a dinamicly mutable on every animation frame object:
 ```
 #### Example of how to handle entire animation with ontick callback only:
 ```javascript
-const
-  particle = { x: width / 2, y: height / 2 },
-  move = animate({
-    dur: 1000,
-    ease: "linear",
-    ontick: () => {
-      const {t} = move, R = (1 - t) * 255, G = 0, B = t * 255
-      fill(`rgb(${R},${G},${B})`)
-      particle.y = height / 2 + Math.sin(t * TAU) * (height / 2 - 10)
-      particle.x = width / 2 + Math.cos(t * TAU) * (width / 2 - 10)
-      circle(particle.x, particle.y, 10)
-    }
-  })
-
+const particle = { x: width / 2, y: height / 2 }
 stroke(null)
-move.play()
+animate({
+  dur: 1000,
+  ease: "linear",
+  ontick: () => {
+    const {t} = move, R = (1 - t) * 255, G = 0, B = t * 255
+    fill(`rgb(${R},${G},${B})`)
+    particle.y = height / 2 + Math.sin(t * TAU) * (height / 2 - 10)
+    particle.x = width / 2 + Math.cos(t * TAU) * (width / 2 - 10)
+    circle(particle.x, particle.y, 10)
+  }
+}).play()
 ```
 #### Example of animation with `.on()` method combined with `loop()`:
 `.on(target, props)` takes a target object (or array of objects) with props to animate "from" and an object (or array of objects) with props to animate "to" (gsap-like)
@@ -166,7 +180,9 @@ loop(() => {
   circle(particle.x, particle.y, 10)
 })
 ```
-### Shape, circle, rect, line
+<br/>
+
+### Shape, circle, ellipse, rect, line
 first call shape to initiate it, then you may call vertex(x, y), arc(x1, y1, x2, y2, r) or curve(x1, y1, x2, y2, x3?, y3?), once shape is finished call it again, provide CLOSE tag as a parameter to close it if needed.
 ```javascript
 const
@@ -187,25 +203,64 @@ for (let i = 0; i < sidesnum; i++) {
 curve(width / 2 + 50, height / 2 + 75, width / 2, height / 2 + 50)
 shape(CLOSE)
 ```
-cirlce takes x, y of center and radius. rect takes x, y, width, height and optionally radius if you want rounded corners. line takes x1, y1, x2, y2.
+`cirlce` takes: x, y of center and radius.
+`ellipse` takes: x, y of center, rx, ry radii; and optionaly: rotation, 'from' and 'to' of an arc in radians, and boolean if direction is counterclockwise.
+`rect` takes: x, y, width, height and optionally radius if you want rounded corners.
+`line` takes: x1, y1, x2, y2.
 ```javascript
 const
   size = 20,
   cx = width / 2,
-  cy = height / 2
+  cy = height / 2,
 
-  vx = (x, len) => x + Math.cos(frame * 0.01) * len
+  vx = (x, len) => x + Math.cos(frame * 0.01) * len,
   vy = (y, len) => y + Math.sin(frame * 0.01) * len
 
 stroke("black", 2)
 fill("white")
 loop(() => {
   clear()
+  ellipse(cx, cy, size * 2, size * 1.333, Math.PI / 4)
   rect(cx - size, cy - size, size * 2, size * 2, 5)
   circle(cx, cy, size)
   line(cx, cy, vx(cx, size), vy(cy, size))
 })
 ```
+<br/>
+
+### Mask
+You need to define mask shape in between `mask()` and `mask(CLOSE)` calls, it could be any number of — shape (and vertex, arc, curve), circle, ellipse or rect — calls. Then draw anything you like to clip by mask, after you done just call clip()
+```javascript
+const size = 100
+const hex = [ "FF", "00" ]
+
+getcanvas(size * 2)
+
+const sun = gradient(RADIAL, size, size, 0, size, size, size * Math.SQRT2)
+const getcolor = () => "#".concat(Array(3).fill("")
+  .map(() => hex[Math.round(Math.random())]).join(""))
+
+for (let i = 0; i < 4; i++) {
+  const x = i % 2 ? size : 0
+  const y = i > 1 ? size : 0
+
+  // define mask
+  mask()
+  rect(x, y, size, size)
+  mask(CLOSE)
+
+  // drawing
+  sun.reset()
+  sun.add(0, getcolor())
+  sun.add(1, getcolor())
+  bg(sun.image)
+
+  // clipping
+  clip()
+}
+```
+<img src="./public/readme/mask.png" alt="drawing" width="200"/><br/><br/>
+
 ### Text
 font takes size (number or string, to set line height provide it after slash like this "16/20"), family, and options like "bold". settext takes CanvasTextAlign, optionally CanvasTextBaseline and width. text takes string of content, x and y of its pivot and optionally width.
 ```javascript
