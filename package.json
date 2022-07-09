@@ -1,13 +1,15 @@
 {
   "name": "bratik",
+  "version": "0.5.3",
   "description": "Tiny, p5.js-like, typed toolkit to cakewalk through a 2D rendering context of Canvas API",
   "keywords": [ "canvas", "2d", "toolkit", "draw", "geometry", "animate" ],
   "author": "Sergey Borovikov",
-  "version": "0.5.3",
-  "module": "./lib/bratik.es.js",
-  "main": "./lib/bratik.cjs.js",
-  "types": "./lib/bratik.d.ts",
-  "files": [ "/lib" ],
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/bratik.es.js",
+  "module": "./dist/bratik.es.js",
+  "types": "./dist/index.d.ts",
+  "files": [ "./dist" ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/foretoo/bratik.git"
@@ -17,20 +19,24 @@
   },
   "homepage": "https://github.com/foretoo/bratik#readme",
   "scripts": {
-    "dev": "vite",
-    "public": "sass src/style.sass public/style.css --no-source-map && tsc --project tsconfig.public.json",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "public": "rollup -c config/public.ts",
+    "dev": "rollup -c config/dev.ts -w",
+    "build": "rollup -c config/build.ts"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.22.0",
-    "@typescript-eslint/parser": "^5.22.0",
-    "eslint": "^8.15.0",
-    "eslint-plugin-import": "^2.26.0",
-    "jest": "^28.1.0",
-    "sass": "^1.51.0",
-    "typescript": "^4.5.4",
-    "vite": "^2.9.7",
-    "vite-plugin-dts": "^1.1.1"
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
+    "eslint": "^8.18.0",
+    "rollup": "^2.75.7",
+    "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-esbuild": "^4.9.1",
+    "rollup-plugin-eslint-bundle": "^7.0.0",
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-sass": "^1.2.12",
+    "rollup-plugin-serve": "^1.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.7.4"
   }
 }
