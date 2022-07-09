@@ -305,8 +305,6 @@ const gradient = (
         _x2 = x2 === undefined ? options[3] === undefined ? _x1 : options[3] : x2,
         _y2 = y2 === undefined ? options[4] === undefined ? _y1 : options[4] : y2,
         _r2 = r2 === undefined ? options[5] === undefined ? ((x2 === undefined && options[3] === undefined) ? (r1 || options[2]) : (x2 || options[3])) : options[5] : r2
-        console.log(_r2, r2);
-        
 
       it.image = ctx.createRadialGradient(_x1 * pr, _y1 * pr, _r1 * pr, _x2 * pr, _y2 * pr, _r2 * pr)
     }
