@@ -16,11 +16,11 @@ import { getcanvas, ... } from "bratik"
 ```
 or if you don't use npm you can import module from unpkg:
 ```javascript
-import { getcanvas, ... } from "https://unpkg.com/bratik@latest/dist/index.js"
+import { getcanvas, ... } from "https://unpkg.com/bratik@latest/dist/bratik.min.js"
 ```
 or by script tag in your html page (this will create the global variable `bratik`):
 ```html
-<script src="https://unpkg.com/bratik@latest/dist/iife/bratik.js"></script>
+<script src="https://unpkg.com/bratik@latest/dist/iife/bratik.min.js"></script>
 ```
 
 <br/>
@@ -122,18 +122,6 @@ loop(play)
 <br/>
 
 ### Animate
-`animate` function comes separately
-```javascript
-import { animate } from "bratik/animate"
-```
-from unpkg:
-```javascript
-import { animate } from "https://unpkg.com/bratik@latest/dist/animate/index.js"
-```
-iife module in your html file (this will create the global variable `animate`):
-```html
-<script src="https://unpkg.com/bratik@latest/dist/iife/animate.js"></script>
-```
 
 animate function takes an object of options:
 ```typescript
