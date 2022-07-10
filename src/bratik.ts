@@ -13,6 +13,10 @@ let width: number,
 
 
 
+/**
+ * INITIATION
+ */
+
 const getcanvas = (
   w?: number, h?: number, id?: string
 ) => {
@@ -48,6 +52,10 @@ const getcanvas = (
 
 
 
+/**
+ * PX RATIO
+ */
+
 const pxratio = (val?: number): number => {
   if (val === undefined) return window.devicePixelRatio
   else {
@@ -59,6 +67,10 @@ const pxratio = (val?: number): number => {
 }
 
 
+
+/**
+ * SHAPES
+ */
 
 let shaping = false
 
@@ -135,6 +147,11 @@ const ctxrect = (
   draw()
 }
 
+
+
+/**
+ * MASK
+ */
 
 let clippath: Path2D
 const mask = (tag?: "CLOSE") => {
@@ -217,6 +234,11 @@ const maskrect = (
 }
 
 
+
+/**
+ * TEXT
+ */
+
 let font_family = "sans-serif"
 const font = (
  size: number | string, family?: string, options?: string
@@ -262,6 +284,10 @@ const text = (
 }
 
 
+
+/**
+ * GRADIENT
+ */
 
 const
   LINEAR = "LINEAR",
@@ -318,6 +344,10 @@ const gradient = (
 
 
 
+/**
+ * DRAW
+ */
+
 const draw = () => {
   ctx.fill()
   ctx.stroke()
@@ -358,6 +388,10 @@ const bg = (color: string | CanvasGradient | CanvasPattern) => {
 }
 
 
+
+/**
+ * LOOPER
+ */
 
 let rafid: number
 
