@@ -2,8 +2,8 @@
 - createGraphics
 - image
 - pixels
-- saveCamvas
+- saveCanvas
 - redraw
 - pointer events
 - filters (blur)
-...
+- autoresize
